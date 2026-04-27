@@ -543,8 +543,8 @@ function closeModal(e){
 // ── HELPERS ───────────────────────────────────────────────
 function sumStr(usd, uzs){
   const parts=[];
-  if(usd>0) parts.push(Math.round(usd)+'$');
-  if(uzs>0) parts.push(fmtN(uzs)+" so'm");
+  if(usd&&usd>0) parts.push(Math.round(usd)+'$');
+  if(uzs&&uzs>0) parts.push(fmtN(uzs)+" so'm");
   return parts.join(' + ')||'0';
 }
 function fmtN(n){ return Math.round(n).toLocaleString('uz-UZ'); }
