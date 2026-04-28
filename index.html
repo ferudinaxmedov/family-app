@@ -8,396 +8,464 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--card:#1e1e1e;--text:#fff;--text2:#aaa;--text3:#666;--green:#34c759;--red:#ff3b30;--blue:#007aff;--border:#2a2a2a;--radius:12px;--radius-sm:8px}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;padding-bottom:70px;overflow-x:hidden}
+:root{
+  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--card:#1e1e1e;
+  --text:#fff;--text2:#aaa;--text3:#666;
+  --green:#34c759;--red:#ff3b30;--blue:#007aff;
+  --border:#2a2a2a;--radius:12px;--rsm:8px;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;padding-bottom:72px;overflow-x:hidden}
 .page{display:none;padding:16px;animation:fadeIn .2s ease}
 .page.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAV */
 .nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0;cursor:pointer;transition:all .2s;color:var(--text3);font-size:10px;border:none;background:none}
-.nav-item.active{color:var(--blue)}
-.nav-item svg{width:22px;height:22px}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0;cursor:pointer;color:var(--text3);font-size:10px;border:none;background:none;transition:color .15s}
+.nav-btn.active{color:var(--blue)}
+.nav-btn svg{width:22px;height:22px}
+
+/* CARDS */
 .card{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border)}
-.label{font-size:12px;color:var(--text2);margin-bottom:4px}
-.value{font-size:24px;font-weight:700}
-.value.green{color:var(--green)}
-.value.red{color:var(--red)}
-.value.blue{color:var(--blue)}
+.lbl{font-size:12px;color:var(--text2);margin-bottom:4px}
+.val{font-size:24px;font-weight:700}
+.val.g{color:var(--green)}.val.r{color:var(--red)}.val.b{color:var(--blue)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.stat-card{background:var(--card);border-radius:var(--radius-sm);padding:14px;border:1px solid var(--border)}
-.stat-label{font-size:11px;color:var(--text2);margin-bottom:6px}
-.stat-value{font-size:18px;font-weight:700}
-.tx-list{display:flex;flex-direction:column;gap:8px}
-.tx-item{background:var(--card);border-radius:var(--radius-sm);padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);cursor:pointer;transition:background .15s}
-.tx-item:active{background:var(--bg3)}
-.tx-left{display:flex;flex-direction:column;gap:3px}
-.tx-tur{font-size:14px;font-weight:500}
-.tx-meta{font-size:11px;color:var(--text2)}
-.tx-right{text-align:right}
-.tx-sum{font-size:15px;font-weight:600}
-.tx-note{font-size:11px;color:var(--text3);margin-top:2px}
-.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;margin-right:4px}
-.badge.ch{background:rgba(255,59,48,.15);color:#ff6b60}
-.badge.ki{background:rgba(52,199,89,.15);color:#4cd964}
-.header{font-size:20px;font-weight:700;margin-bottom:16px}
-.sub-header{font-size:14px;color:var(--text2);margin-bottom:12px}
-.form-group{margin-bottom:14px}
-.form-label{font-size:12px;color:var(--text2);margin-bottom:6px;display:block}
-.btn-grid{display:grid;gap:8px}
-.btn-grid.col2{grid-template-columns:1fr 1fr}
-.btn-grid.col3{grid-template-columns:1fr 1fr 1fr}
-.sel-btn{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;color:var(--text);font-size:13px;cursor:pointer;text-align:center;transition:all .2s}
-.sel-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
-input[type=text],input[type=number],input[type=date]{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none;color-scheme:dark}
+.sc{background:var(--card);border-radius:var(--rsm);padding:14px;border:1px solid var(--border)}
+.sc-lbl{font-size:11px;color:var(--text2);margin-bottom:6px}
+.sc-val{font-size:18px;font-weight:700}
+
+/* TX ITEM */
+.txl{display:flex;flex-direction:column;gap:8px}
+.txi{background:var(--card);border-radius:var(--rsm);padding:12px 14px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);cursor:pointer}
+.txi:active{background:var(--bg3)}
+.tx-l{display:flex;flex-direction:column;gap:3px}
+.tx-t{font-size:14px;font-weight:500}
+.tx-m{font-size:11px;color:var(--text2)}
+.tx-r{text-align:right}
+.tx-s{font-size:15px;font-weight:600}
+.tx-n{font-size:11px;color:var(--text3);margin-top:2px}
+.bdg{display:inline-block;font-size:10px;padding:2px 7px;border-radius:20px;margin-right:4px}
+.bdg.c{background:rgba(255,59,48,.15);color:#ff6b60}
+.bdg.k{background:rgba(52,199,89,.15);color:#4cd964}
+
+/* FORM */
+.hdr{font-size:20px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.fg{margin-bottom:14px}
+.fl{font-size:12px;color:var(--text2);margin-bottom:6px;display:block}
+.bg{display:grid;gap:8px}
+.bg.c2{grid-template-columns:1fr 1fr}
+.bg.c3{grid-template-columns:1fr 1fr 1fr}
+.sb{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:10px;color:var(--text);font-size:13px;cursor:pointer;text-align:center;transition:all .15s}
+.sb.on{background:var(--blue);border-color:var(--blue);color:#fff}
+input[type=text],input[type=number],input[type=date]{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:12px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none;color-scheme:dark}
 input:focus{border-color:var(--blue)}
-.submit-btn{width:100%;background:var(--blue);border:none;border-radius:var(--radius);padding:14px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;transition:opacity .2s}
-.submit-btn:active{opacity:.8}
-.filter-row{display:flex;gap:8px;margin-bottom:14px;align-items:center}
-.filter-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text);font-size:13px;outline:none;color-scheme:dark}
-.filter-btn{background:var(--blue);border:none;border-radius:var(--radius-sm);padding:10px 14px;color:#fff;font-size:13px;cursor:pointer}
+.btn-sub{width:100%;background:var(--blue);border:none;border-radius:var(--radius);padding:14px;color:#fff;font-size:15px;font-weight:600;cursor:pointer;margin-top:6px}
+.btn-sub:active{opacity:.8}
+.btn-ref{background:var(--bg3);border:1px solid var(--border);border-radius:var(--rsm);padding:6px 12px;color:var(--text2);font-size:12px;cursor:pointer}
+
+/* LOADER / EMPTY */
 .loader{text-align:center;padding:40px;color:var(--text2)}
-.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+.sp{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{text-align:center;padding:40px;color:var(--text3)}
-.empty-icon{font-size:40px;margin-bottom:8px}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:flex-end}
-.modal-overlay.open{display:flex}
-.modal{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:80vh;overflow-y:auto}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.modal-title{font-size:16px;font-weight:700}
-.modal-close{background:var(--bg3);border:none;border-radius:50%;width:28px;height:28px;color:var(--text);cursor:pointer;font-size:16px}
-.chart-wrap{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border)}
-.chart-title{font-size:13px;color:var(--text2);margin-bottom:12px}
+.ei{font-size:40px;margin-bottom:8px}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:flex-end}
+.mo.open{display:flex}
+.md{background:var(--bg2);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:80vh;overflow-y:auto}
+.mdh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.mdt{font-size:16px;font-weight:700}
+.mdc{background:var(--bg3);border:none;border-radius:50%;width:28px;height:28px;color:var(--text);cursor:pointer;font-size:16px}
+
+/* CHART */
+.cw{background:var(--card);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border)}
+.ct{font-size:13px;color:var(--text2);margin-bottom:12px}
 canvas{max-height:220px}
-.top-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
-.top-item:last-child{border-bottom:none}
-.top-rank{font-size:12px;color:var(--text3);width:20px}
-.top-name{flex:1;font-size:13px;padding:0 8px}
-.top-val{font-size:13px;font-weight:600}
-.section-title{font-size:13px;font-weight:600;color:var(--text2);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.5px}
-.date-badge{font-size:11px;color:var(--text3);padding:3px 8px;background:var(--bg3);border-radius:20px;display:inline-block;margin-bottom:10px}
+.ti{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)}
+.ti:last-child{border-bottom:none}
+.ti-n{flex:1;font-size:13px;padding:0 8px}
+.ti-v{font-size:13px;font-weight:600}
+.sec{font-size:13px;font-weight:600;color:var(--text2);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.5px}
+.dbdg{font-size:11px;color:var(--text3);padding:3px 8px;background:var(--bg3);border-radius:20px;display:inline-block;margin-bottom:10px}
 </style>
 </head>
 <body>
-<div id="p-today" class="page active"><div class="header" style="display:flex;justify-content:space-between;align-items:center"><span>Bugungi holat 📊</span><button onclick="clearCache();loadToday()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 12px;color:var(--text2);font-size:12px;cursor:pointer">↻ Yangilash</button></div><div id="today-content"><div class="loader"><div class="spinner"></div>Yuklanmoqda...</div></div></div>
+
+<!-- PAGES -->
+<div id="p-today" class="page active">
+  <div class="hdr"><span>Bugungi holat 📊</span><button class="btn-ref" onclick="clearCache();loadToday()">↻</button></div>
+  <div id="today-content"><div class="loader"><div class="sp"></div>Yuklanmoqda...</div></div>
+</div>
+
 <div id="p-add" class="page">
-  <div class="header">Yangi amal ➕</div>
-  <div class="form-group"><label class="form-label">Amal turi</label><div class="btn-grid col2"><button class="sel-btn active" onclick="selType('CHIQIM',this)">📤 Chiqim</button><button class="sel-btn" onclick="selType('KIRIM',this)">📥 Kirim</button></div></div>
-  <div class="form-group"><label class="form-label">Sana</label><input type="date" id="f-sana"></div>
-  <div class="form-group"><label class="form-label" id="tur-label">Chiqim turi</label><div class="btn-grid col2" id="tur-grid"></div></div>
-  <div class="form-group"><label class="form-label">Egasi</label><div class="btn-grid col2"><button class="sel-btn active" onclick="selBtn('egasi',this)">👨 Ferudin</button><button class="sel-btn" onclick="selBtn('egasi',this)">👩 Guloyim</button></div></div>
-  <div class="form-group"><label class="form-label">To'lov turi</label><div class="btn-grid col3"><button class="sel-btn active" onclick="selBtn('tolov',this)">💵 Cash</button><button class="sel-btn" onclick="selBtn('tolov',this)">💳 Card</button><button class="sel-btn" onclick="selBtn('tolov',this)">📌 Other</button></div></div>
-  <div class="form-group"><label class="form-label">Valyuta</label><div class="btn-grid col2"><button class="sel-btn active" onclick="selBtn('valyuta',this)">💵 USD</button><button class="sel-btn" onclick="selBtn('valyuta',this)">🇺🇿 UZS</button></div></div>
-  <div class="form-group"><label class="form-label">Summa</label><input type="number" id="f-summa" placeholder="Masalan: 150 yoki 350000"></div>
-  <div class="form-group"><label class="form-label">Note (ixtiyoriy)</label><input type="text" id="f-note" placeholder="Izoh..."></div>
-  <button class="submit-btn" onclick="submitForm()">✅ Saqlash</button>
-</div>
-<div id="p-filter" class="page">
-  <div class="header">Qidiruv 🔍</div>
-  <div class="card" style="margin-bottom:12px">
-    <div class="form-group">
-      <label class="form-label">Amal turi</label>
-      <div class="btn-grid col2">
-        <button class="sel-btn active" id="ft-chiqim" onclick="selFilter('tip','CHIQIM',this)">📤 Chiqim</button>
-        <button class="sel-btn" id="ft-kirim" onclick="selFilter('tip','KIRIM',this)">📥 Kirim</button>
-      </div>
+  <div class="hdr">Yangi amal ➕</div>
+  <div class="fg"><label class="fl">Amal turi</label>
+    <div class="bg c2">
+      <button class="sb on" onclick="selType('CHIQIM',this)">📤 Chiqim</button>
+      <button class="sb" onclick="selType('KIRIM',this)">📥 Kirim</button>
     </div>
-    <div class="form-group">
-      <label class="form-label">Davr</label>
-      <div class="btn-grid col2">
-        <button class="sel-btn active" onclick="selFilter('davr','bu_oy',this)">Bu oy</button>
-        <button class="sel-btn" onclick="selFilter('davr','otgan_oy',this)">O'tgan oy</button>
-        <button class="sel-btn" onclick="selFilter('davr','bu_yil',this)">Bu yil</button>
-        <button class="sel-btn" onclick="selFilter('davr','hammasi',this)">Hammasi</button>
-        <button class="sel-btn" onclick="selFilter('davr','custom',this)" style="grid-column:span 2">📆 O'z sanani kiritish</button>
-      </div>
-    </div>
-    <div id="custom-range" style="display:none">
-      <div class="form-group">
-        <label class="form-label">Dan</label>
-        <input type="date" id="f-date-from" class="filter-input" style="width:100%">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Gacha</label>
-        <input type="date" id="f-date-to" class="filter-input" style="width:100%">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label" id="tur-filter-label">Xarajat turi</label>
-      <div id="filter-tur-grid" class="btn-grid col2"></div>
-    </div>
-    <button class="submit-btn" onclick="loadFilter()">🔍 Ko'rsatish</button>
   </div>
-  <div id="filter-content"><div class="empty"><div class="empty-icon">📅</div>Yuqorida filter tanlang</div></div>
+  <div class="fg"><label class="fl">Sana</label><input type="date" id="f-sana"></div>
+  <div class="fg"><label class="fl" id="tur-lbl">Chiqim turi</label><div class="bg c2" id="tur-grid"></div></div>
+  <div class="fg"><label class="fl">Egasi</label>
+    <div class="bg c2">
+      <button class="sb on" onclick="selBtn('egasi',this)">👨 Ferudin</button>
+      <button class="sb" onclick="selBtn('egasi',this)">👩 Guloyim</button>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">To'lov turi</label>
+    <div class="bg c3">
+      <button class="sb on" onclick="selBtn('tolov',this)">💵 Cash</button>
+      <button class="sb" onclick="selBtn('tolov',this)">💳 Card</button>
+      <button class="sb" onclick="selBtn('tolov',this)">📌 Other</button>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">Valyuta</label>
+    <div class="bg c2">
+      <button class="sb on" onclick="selBtn('valyuta',this)">💵 USD</button>
+      <button class="sb" onclick="selBtn('valyuta',this)">🇺🇿 UZS</button>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">Summa</label><input type="number" id="f-summa" placeholder="Masalan: 150 yoki 350000"></div>
+  <div class="fg"><label class="fl">Note (ixtiyoriy)</label><input type="text" id="f-note" placeholder="Izoh..."></div>
+  <button class="btn-sub" onclick="submitForm()">✅ Saqlash</button>
 </div>
-<div id="p-history" class="page"><div class="header">Tarix 📋</div><div id="history-content"><div class="loader"><div class="spinner"></div>Yuklanmoqda...</div></div></div>
-<div id="p-stats" class="page"><div class="header">Statistika 📈</div><div id="stats-content"><div class="loader"><div class="spinner"></div>Yuklanmoqda...</div></div></div>
+
+<div id="p-filter" class="page">
+  <div class="hdr">Qidiruv 🔍</div>
+  <div class="card">
+    <div class="fg"><label class="fl">Amal turi</label>
+      <div class="bg c2">
+        <button class="sb on" onclick="fSel('tip','CHIQIM',this)">📤 Chiqim</button>
+        <button class="sb" onclick="fSel('tip','KIRIM',this)">📥 Kirim</button>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Davr</label>
+      <div class="bg c2">
+        <button class="sb on" onclick="fSel('davr','bu_oy',this)">Bu oy</button>
+        <button class="sb" onclick="fSel('davr','otgan_oy',this)">O'tgan oy</button>
+        <button class="sb" onclick="fSel('davr','bu_yil',this)">Bu yil</button>
+        <button class="sb" onclick="fSel('davr','hammasi',this)">Hammasi</button>
+        <button class="sb" style="grid-column:span 2" onclick="fSel('davr','custom',this)">📆 O'z sana oralig'i</button>
+      </div>
+    </div>
+    <div id="custom-range" style="display:none;margin-bottom:14px">
+      <div class="fg"><label class="fl">Dan</label><input type="date" id="f-from"></div>
+      <div class="fg"><label class="fl">Gacha</label><input type="date" id="f-to"></div>
+    </div>
+    <div class="fg"><label class="fl" id="f-tur-lbl">Xarajat turi</label>
+      <div class="bg c2" id="f-tur-grid"></div>
+    </div>
+    <button class="btn-sub" onclick="runFilter()">🔍 Ko'rsatish</button>
+  </div>
+  <div id="filter-result"></div>
+</div>
+
+<div id="p-history" class="page">
+  <div class="hdr">Tarix 📋</div>
+  <div id="history-content"><div class="loader"><div class="sp"></div>Yuklanmoqda...</div></div>
+</div>
+
+<div id="p-stats" class="page">
+  <div class="hdr">Statistika 📈</div>
+  <div id="stats-content"><div class="loader"><div class="sp"></div>Yuklanmoqda...</div></div>
+</div>
+
+<!-- NAV -->
 <nav class="nav">
-  <button class="nav-item active" onclick="goPage('today',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Bugun</button>
-  <button class="nav-item" onclick="goPage('add',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>Qo'shish</button>
-  <button class="nav-item" onclick="goPage('filter',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Qidiruv</button>
-  <button class="nav-item" onclick="goPage('history',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v10l4 4"/><circle cx="12" cy="12" r="10"/></svg>Tarix</button>
-  <button class="nav-item" onclick="goPage('stats',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Statistika</button>
+  <button class="nav-btn active" onclick="goPage('today',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Bugun
+  </button>
+  <button class="nav-btn" onclick="goPage('add',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>Qo'shish
+  </button>
+  <button class="nav-btn" onclick="goPage('filter',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>Qidiruv
+  </button>
+  <button class="nav-btn" onclick="goPage('history',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Tarix
+  </button>
+  <button class="nav-btn" onclick="goPage('stats',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Statistika
+  </button>
 </nav>
-<div class="modal-overlay" id="edit-modal" onclick="if(event.target===this)closeModal()">
-  <div class="modal"><div class="modal-header"><span class="modal-title">Tahrirlash ✏️</span><button class="modal-close" onclick="closeModal()">×</button></div><div id="edit-content"></div></div>
+
+<!-- EDIT MODAL -->
+<div class="mo" id="edit-modal" onclick="if(event.target===this)closeMod()">
+  <div class="md">
+    <div class="mdh"><span class="mdt">Tahrirlash ✏️</span><button class="mdc" onclick="closeMod()">×</button></div>
+    <div id="edit-body"></div>
+  </div>
 </div>
+
 <script>
-const API='https://worker-production-19c9.up.railway.app';
-const tg=window.Telegram?.WebApp;
-if(tg){tg.ready();tg.expand();}
-const state={type:'CHIQIM',tur:'',egasi:'FERUDIN',tolov:'CASH',valyuta:'USD',editRow:0,editSheet:''};
-const CT=['OZIQ OVQAT','BENZIN','RASSROCHKA','KIYIM KECHAK','XURSHIDGA','ISHXONAMGA','UYDAGILARGA','SHTRAFLAR','SHOPPPING','ISHXONA REG','SARTAROSH','BOSHQA'];
-const KT=['ISHXONA','SEEDBEE','BUSINESS','UYDAGILAR','BOSHQA'];
-const EM={'OZIQ OVQAT':'🛒','BENZIN':'⛽','RASSROCHKA':'💳','KIYIM KECHAK':'👗','XURSHIDGA':'👨','ISHXONAMGA':'🏢','UYDAGILARGA':'🏠','SHTRAFLAR':'🚫','SHOPPPING':'🛍','ISHXONA REG':'📋','SARTAROSH':'✂️','BOSHQA':'💡','ISHXONA':'🏢','SEEDBEE':'🌱','BUSINESS':'💼','UYDAGILAR':'🏠'};
+const API = 'https://worker-production-19c9.up.railway.app';
+try{ window.Telegram?.WebApp?.ready(); window.Telegram?.WebApp?.expand(); }catch(e){}
 
-function goPage(n,btn){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-  document.getElementById('p-'+n).classList.add('active');
-  btn.classList.add('active');
-  if(n==='today') loadToday();
-  if(n==='history') loadHistory();
-  if(n==='stats') loadStats();
-  if(n==='add') initForm();
-  if(n==='filter'){ renderFilterTurs(); }
-}
+// ── EMOJIS ───────────────────────────────────────────────
+const EM = {'OZIQ OVQAT':'🛒','BENZIN':'⛽','RASSROCHKA':'💳','KIYIM KECHAK':'👗',
+  'XURSHIDGA':'👨','ISHXONAMGA':'🏢','UYDAGILARGA':'🏠','SHTRAFLAR':'🚫',
+  'SHOPPPING':'🛍','ISHXONA REG':'📋','SARTAROSH':'✂️','BOSHQA':'💡',
+  'ISHXONA':'🏢','SEEDBEE':'🌱','BUSINESS':'💼','UYDAGILAR':'🏠'};
 
-const _cache={};
-async function apiFetch(url, ttl=60000){
-  const now=Date.now();
-  if(ttl>0 && _cache[url] && now-_cache[url].t < ttl) return _cache[url].d;
+const CT = ['OZIQ OVQAT','BENZIN','RASSROCHKA','KIYIM KECHAK','XURSHIDGA','ISHXONAMGA','UYDAGILARGA','SHTRAFLAR','SHOPPPING','ISHXONA REG','SARTAROSH','BOSHQA'];
+const KT = ['ISHXONA','SEEDBEE','BUSINESS','UYDAGILAR','BOSHQA'];
+
+// ── STATE ────────────────────────────────────────────────
+const st  = {type:'CHIQIM',tur:'',egasi:'FERUDIN',tolov:'CASH',valyuta:'USD'};
+const fst = {tip:'CHIQIM',davr:'bu_oy',tur:'BARCHASI'};
+const edt = {row:0,sheet:'',valyuta:'USD'};
+
+// ── CACHE ────────────────────────────────────────────────
+const _c = {};
+async function api(url, ttl=60000){
+  const now = Date.now();
+  if(ttl>0 && _c[url] && now-_c[url].t < ttl) return _c[url].d;
   try{
-    const r=await fetch(API+url);
+    const r = await fetch(API+url);
     if(!r.ok) return null;
-    const d=await r.json();
-    if(ttl>0) _cache[url]={d,t:now};
+    const d = await r.json();
+    if(ttl>0) _c[url]={d,t:now};
     return d;
-  }catch{return null;}
+  }catch(e){ console.error(url,e); return null; }
 }
-function clearCache(url){ if(url) delete _cache[url]; else Object.keys(_cache).forEach(k=>delete _cache[k]); }
+function clearCache(){ Object.keys(_c).forEach(k=>delete _c[k]); }
 
+// ── NAVIGATION ───────────────────────────────────────────
+function goPage(name, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('p-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='today')   loadToday();
+  if(name==='history') loadHistory();
+  if(name==='stats')   loadStats();
+  if(name==='add')     initForm();
+  if(name==='filter')  initFilter();
+}
+
+// ── TODAY ────────────────────────────────────────────────
 async function loadToday(){
-  const el=document.getElementById('today-content');
-  el.innerHTML='<div class="loader"><div class="spinner"></div>Yuklanmoqda...</div>';
+  const el = document.getElementById('today-content');
+  el.innerHTML = '<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
   try{
-    const [tod,bal]=await Promise.all([apiFetch('/today'),apiFetch('/balance')]);
+    const [tod, bal] = await Promise.all([api('/today'), api('/balance')]);
     const chU=(tod?.total_ch_usd)||0, chZ=(tod?.total_ch_uzs)||0;
     const kiU=(tod?.total_ki_usd)||0, kiZ=(tod?.total_ki_uzs)||0;
     const balFmt=(bal?.formatted)||'—';
-    let html=`<div class="card"><div class="label">💰 Joriy balans</div><div class="value blue">${balFmt}</div></div>
-    <div class="grid2">
-      <div class="stat-card"><div class="stat-label">📤 Bugungi chiqim</div><div class="stat-value red">${sstr(chU,chZ)}</div></div>
-      <div class="stat-card"><div class="stat-label">📥 Bugungi kirim</div><div class="stat-value green">${sstr(kiU,kiZ)}</div></div>
-    </div><div class="date-badge">📅 ${tod?.date||''}</div>`;
+    let h = `
+      <div class="card"><div class="lbl">💰 Joriy balans</div><div class="val b">${balFmt}</div></div>
+      <div class="grid2">
+        <div class="sc"><div class="sc-lbl">📤 Bugungi chiqim</div><div class="sc-val r">${ss(chU,chZ)}</div></div>
+        <div class="sc"><div class="sc-lbl">📥 Bugungi kirim</div><div class="sc-val g">${ss(kiU,kiZ)}</div></div>
+      </div>
+      <div class="dbdg">📅 ${tod?.date||''}</div>`;
     const chs=((tod?.chiqimlar)||[]).filter(t=>(t.usd||0)>0||(t.uzs||0)>0);
     const kis=((tod?.kirimlar)||[]).filter(t=>(t.usd||0)>0||(t.uzs||0)>0);
-    if(chs.length){html+='<div class="section-title">Chiqimlar</div><div class="tx-list">';chs.forEach(t=>{html+=txItem(t,'CHIQIM');});html+='</div>';}
-    if(kis.length){html+='<div class="section-title">Kirimlar</div><div class="tx-list">';kis.forEach(t=>{html+=txItem(t,'KIRIM');});html+='</div>';}
-    if(!chs.length&&!kis.length){html+='<div class="empty"><div class="empty-icon">🌙</div>Bugun hech narsa yo\'q</div>';}
-    el.innerHTML=html;
-  }catch(e){el.innerHTML='<div class="empty">❌ Xato: '+e.message+'</div>';}
+    if(chs.length){ h+='<div class="sec">Chiqimlar</div><div class="txl">'; chs.forEach(t=>{h+=txi(t,'CHIQIM');}); h+='</div>'; }
+    if(kis.length){ h+='<div class="sec">Kirimlar</div><div class="txl">'; kis.forEach(t=>{h+=txi(t,'KIRIM');}); h+='</div>'; }
+    if(!chs.length&&!kis.length) h+='<div class="empty"><div class="ei">🌙</div>Bugun hech narsa yo\'q</div>';
+    el.innerHTML = h;
+  }catch(e){ el.innerHTML='<div class="empty">❌ '+e.message+'</div>'; }
 }
 
-const fstate = {tip:'CHIQIM', davr:'bu_oy', tur:'BARCHASI'};
-
-function selFilter(key, val, btn){
-  fstate[key] = val;
-  const parent = btn.parentElement;
-  parent.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  if(key==='davr'){
-    document.getElementById('custom-range').style.display = val==='custom'?'block':'none';
-  }
-  if(key==='tip') renderFilterTurs();
-}
-
-function renderFilterTurs(){
-  const turs = fstate.tip==='CHIQIM'
-    ? ['BARCHASI','OZIQ OVQAT','BENZIN','RASSROCHKA','KIYIM KECHAK','XURSHIDGA','ISHXONAMGA','UYDAGILARGA','SHTRAFLAR','SHOPPPING','ISHXONA REG','SARTAROSH','BOSHQA']
-    : ['BARCHASI','ISHXONA','SEEDBEE','BUSINESS','UYDAGILAR','BOSHQA'];
-  const grid = document.getElementById('filter-tur-grid');
-  grid.className = 'btn-grid col2';
-  grid.innerHTML = turs.map(t=>`<button class="sel-btn${fstate.tur===t?' active':''}" onclick="fstate.tur='${t}';renderFilterTurs()">${EM[t]||''} ${t==='BARCHASI'?'📋 Barchasi':t}</button>`).join('');
-  document.getElementById('tur-filter-label').textContent = fstate.tip==='CHIQIM'?'Xarajat turi':'Kirim turi';
-}
-
-async function loadFilter(){
-  const el = document.getElementById('filter-content');
-  el.innerHTML='<div class="loader"><div class="spinner"></div>Yuklanmoqda...</div>';
-  let url = `/by-filter?tip=${fstate.tip}&davr=${fstate.davr}&tur=${encodeURIComponent(fstate.tur)}`;
-  if(fstate.davr==='custom'){
-    const df = document.getElementById('f-date-from').value;
-    const dt = document.getElementById('f-date-to').value;
-    if(!df||!dt){el.innerHTML='<div class="empty">❌ Ikkala sanani ham kiriting</div>';return;}
-    const [y1,m1,d1]=df.split('-'); const [y2,m2,d2]=dt.split('-');
-    url += `&date_from=${d1}.${m1}.${y1}&date_to=${d2}.${m2}.${y2}`;
-  }
-  const data = await apiFetch(url, 0); // no cache for filter
-  if(!data){el.innerHTML='<div class="empty">❌ Xato</div>';return;}
-  const rows = (data.rows||[]);
-  const davr_txt = {bu_oy:'Bu oy',otgan_oy:"O'tgan oy",bu_yil:'Bu yil',hammasi:'Hammasi',custom:'Maxsus sana'}[fstate.davr]||fstate.davr;
-  const tur_txt = fstate.tur==='BARCHASI'?'Barchasi':fstate.tur;
-  let html=`<div class="date-badge">${fstate.tip==='CHIQIM'?'📤':'📥'} ${davr_txt} · ${tur_txt}</div>`;
-  if(!rows.length){
-    html+='<div class="empty"><div class="empty-icon">🔍</div>Ma'lumot topilmadi</div>';
-  } else {
-    html+=`<div class="sub-header">Jami: ${rows.length} ta amal</div>`;
-    html+='<div class="tx-list">';
-    rows.forEach(t=>{html+=txItem(t,fstate.tip,true);});
-    html+='</div>';
-    html+=`<div class="card" style="margin-top:12px">
-      <div class="label">📊 JAMI</div>
-      <div class="value ${fstate.tip==='CHIQIM'?'red':'green'}">${sstr(data.total_usd||0, data.total_uzs||0)}</div>
-    </div>`;
-  }
-  el.innerHTML=html;
-}
-
+// ── ADD FORM ─────────────────────────────────────────────
 function initForm(){
-  document.getElementById('f-sana').value=new Date().toLocaleDateString('en-CA');
-  document.getElementById('f-summa').value='';
-  document.getElementById('f-note').value='';
-  renderTurs();
+  document.getElementById('f-sana').value = new Date().toLocaleDateString('en-CA');
+  document.getElementById('f-summa').value = '';
+  document.getElementById('f-note').value  = '';
+  st.tur = ''; renderTurs();
 }
-function selType(type,btn){
-  state.type=type;state.tur='';
-  document.querySelectorAll('#p-add .btn-grid.col2 .sel-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tur-label').textContent=type==='CHIQIM'?'Chiqim turi':'Kirim turi';
+function selType(type, btn){
+  st.type=type; st.tur='';
+  btn.parentElement.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('tur-lbl').textContent = type==='CHIQIM'?'Chiqim turi':'Kirim turi';
   renderTurs();
 }
 function renderTurs(){
-  const turs=state.type==='CHIQIM'?CT:KT;
-  const grid=document.getElementById('tur-grid');
-  grid.className='btn-grid '+(turs.length>6?'col3':'col2');
-  grid.innerHTML=turs.map(t=>`<button class="sel-btn${state.tur===t?' active':''}" onclick="selTur('${t}',this)">${EM[t]||''} ${t}</button>`).join('');
+  const turs = st.type==='CHIQIM'?CT:KT;
+  const g = document.getElementById('tur-grid');
+  g.className = 'bg '+(turs.length>6?'c3':'c2');
+  g.innerHTML = turs.map(t=>`<button class="sb${st.tur===t?' on':''}" onclick="selTur('${t}',this)">${EM[t]||''} ${t}</button>`).join('');
 }
-function selTur(t,btn){state.tur=t;document.querySelectorAll('#tur-grid .sel-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
-function selBtn(key,btn){
-  btn.parentElement.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  const txt=btn.textContent.trim();
-  if(key==='egasi') state.egasi=txt.includes('Ferudin')?'FERUDIN':'GULOYIM';
-  if(key==='tolov') state.tolov=txt.includes('Cash')?'CASH':txt.includes('Card')?'CARD':'OTHER';
-  if(key==='valyuta') state.valyuta=txt.includes('USD')?'USD':'UZS';
+function selTur(t, btn){
+  st.tur=t;
+  document.querySelectorAll('#tur-grid .sb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function selBtn(key, btn){
+  btn.parentElement.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const txt = btn.textContent.trim();
+  if(key==='egasi')   st.egasi   = txt.includes('Ferudin')?'FERUDIN':'GULOYIM';
+  if(key==='tolov')   st.tolov   = txt.includes('Cash')?'CASH':txt.includes('Card')?'CARD':'OTHER';
+  if(key==='valyuta') st.valyuta = txt.includes('USD')?'USD':'UZS';
 }
 async function submitForm(){
-  if(!state.tur){alert('Tur tanlang!');return;}
-  const summa=parseFloat(document.getElementById('f-summa').value);
-  if(!summa||summa<=0){alert('Summa kiriting!');return;}
-  const sanaRaw=document.getElementById('f-sana').value;
-  if(!sanaRaw){alert('Sana kiriting!');return;}
-  const [y,m,d]=sanaRaw.split('-');
-  const body={type:state.type,sana:`${d}.${m}.${y}`,egasi:state.egasi,tur:state.tur,tolov:state.tolov,valyuta:state.valyuta,summa,note:document.getElementById('f-note').value||''};
-  const btn=document.querySelector('#p-add .submit-btn');
-  btn.textContent='⏳ Saqlanmoqda...';btn.disabled=true;
+  if(!st.tur){ alert('Tur tanlang!'); return; }
+  const summa = parseFloat(document.getElementById('f-summa').value);
+  if(!summa||summa<=0){ alert('Summa kiriting!'); return; }
+  const raw = document.getElementById('f-sana').value;
+  if(!raw){ alert('Sana kiriting!'); return; }
+  const [y,m,d] = raw.split('-');
+  const body = {type:st.type,sana:`${d}.${m}.${y}`,egasi:st.egasi,tur:st.tur,tolov:st.tolov,valyuta:st.valyuta,summa,note:document.getElementById('f-note').value||''};
+  const btn  = document.querySelector('#p-add .btn-sub');
+  btn.textContent='⏳ Saqlanmoqda...'; btn.disabled=true;
   try{
-    const r=await fetch(API+'/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    const res=await r.json();
-    if(res.success){btn.textContent='✅ Saqlandi!';clearCache();setTimeout(()=>{btn.textContent='✅ Saqlash';btn.disabled=false;},2000);document.getElementById('f-summa').value='';document.getElementById('f-note').value='';}
+    const r   = await fetch(API+'/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const res = await r.json();
+    if(res.success){ clearCache(); btn.textContent='✅ Saqlandi!'; setTimeout(()=>{btn.textContent='✅ Saqlash';btn.disabled=false;},2000); document.getElementById('f-summa').value=''; document.getElementById('f-note').value=''; }
     else throw new Error(res.detail||'Xato');
-  }catch(e){btn.textContent='✅ Saqlash';btn.disabled=false;alert('Xato: '+e.message);}
+  }catch(e){ btn.textContent='✅ Saqlash'; btn.disabled=false; alert('Xato: '+e.message); }
 }
-async function loadFilter(){
-  const dateRaw=document.getElementById('filter-date').value;
-  if(!dateRaw) return;
-  const [y,m,d]=dateRaw.split('-');
-  const date=`${d}.${m}.${y}`;
-  const el=document.getElementById('filter-content');
-  el.innerHTML='<div class="loader"><div class="spinner"></div>Yuklanmoqda...</div>';
-  const data=await apiFetch('/by-date?date='+encodeURIComponent(date));
-  if(!data){el.innerHTML='<div class="empty">❌ Xato</div>';return;}
-  let html=`<div class="date-badge">📅 ${date}</div>`;
-  const chs=(data.chiqimlar||[]).filter(t=>(t.usd||0)>0||(t.uzs||0)>0);
-  const kis=(data.kirimlar||[]).filter(t=>(t.usd||0)>0||(t.uzs||0)>0);
-  if(chs.length){html+='<div class="section-title">Chiqimlar</div><div class="tx-list">';chs.forEach(t=>{html+=txItem(t,'CHIQIM',true);});html+='</div>';}
-  if(kis.length){html+='<div class="section-title">Kirimlar</div><div class="tx-list">';kis.forEach(t=>{html+=txItem(t,'KIRIM',true);});html+='</div>';}
-  if(!chs.length&&!kis.length){html+='<div class="empty"><div class="empty-icon">🔍</div>Bu sanada ma\'lumot yo\'q</div>';}
-  el.innerHTML=html;
+
+// ── FILTER ───────────────────────────────────────────────
+function initFilter(){
+  renderFTurs();
 }
+function fSel(key, val, btn){
+  fst[key]=val;
+  btn.parentElement.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  if(key==='davr') document.getElementById('custom-range').style.display = val==='custom'?'block':'none';
+  if(key==='tip')  renderFTurs();
+}
+function renderFTurs(){
+  const turs = ['BARCHASI',...(fst.tip==='CHIQIM'?CT:KT)];
+  const g = document.getElementById('f-tur-grid');
+  g.className = 'bg c2';
+  g.innerHTML = turs.map(t=>`<button class="sb${fst.tur===t?' on':''}" onclick="fst.tur='${t}';renderFTurs()">${t==='BARCHASI'?'📋 Barchasi':(EM[t]||'')+' '+t}</button>`).join('');
+  document.getElementById('f-tur-lbl').textContent = fst.tip==='CHIQIM'?'Xarajat turi':'Kirim turi';
+}
+async function runFilter(){
+  const el = document.getElementById('filter-result');
+  el.innerHTML = '<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
+  let url = `/by-filter?tip=${fst.tip}&davr=${fst.davr}&tur=${encodeURIComponent(fst.tur)}`;
+  if(fst.davr==='custom'){
+    const df=document.getElementById('f-from').value;
+    const dt=document.getElementById('f-to').value;
+    if(!df||!dt){ el.innerHTML='<div class="empty">❌ Ikkala sanani kiriting</div>'; return; }
+    const [y1,m1,d1]=df.split('-'); const [y2,m2,d2]=dt.split('-');
+    url+=`&date_from=${d1}.${m1}.${y1}&date_to=${d2}.${m2}.${y2}`;
+  }
+  const data = await api(url, 0);
+  if(!data){ el.innerHTML='<div class="empty">❌ Xato</div>'; return; }
+  const rows=(data.rows||[]);
+  const davr_map={bu_oy:'Bu oy',otgan_oy:"O'tgan oy",bu_yil:'Bu yil',hammasi:'Hammasi',custom:'Maxsus'};
+  const dvt=davr_map[fst.davr]||fst.davr;
+  const turt=fst.tur==='BARCHASI'?'Barchasi':fst.tur;
+  const ico=fst.tip==='CHIQIM'?'📤':'📥';
+  let h=`<div class="dbdg">${ico} ${dvt} · ${turt}</div>`;
+  if(!rows.length){ h+='<div class="empty"><div class="ei">🔍</div>Ma\'lumot topilmadi</div>'; }
+  else{
+    h+=`<div style="font-size:13px;color:var(--text2);margin-bottom:8px">Jami: ${rows.length} ta amal</div><div class="txl">`;
+    rows.forEach(t=>{ h+=txi(t,fst.tip,true); });
+    h+=`</div><div class="card" style="margin-top:12px"><div class="lbl">📊 JAMI</div><div class="val ${fst.tip==='CHIQIM'?'r':'g'}">${ss(data.total_usd||0,data.total_uzs||0)}</div></div>`;
+  }
+  el.innerHTML=h;
+}
+
+// ── HISTORY ──────────────────────────────────────────────
 async function loadHistory(){
-  const el=document.getElementById('history-content');
-  el.innerHTML='<div class="loader"><div class="spinner"></div>Yuklanmoqda...</div>';
-  const data=await apiFetch('/history?limit=100');
-  if(!data||!data.transactions){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div>Hech narsa yo\'q</div>';return;}
+  const el = document.getElementById('history-content');
+  el.innerHTML='<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
+  const data = await api('/history?limit=100');
+  if(!data){ el.innerHTML='<div class="empty"><div class="ei">❌</div>Xato</div>'; return; }
   const txs=(data.transactions||[]).filter(t=>(t.usd||0)>0||(t.uzs||0)>0);
-  if(!txs.length){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div>Hech narsa yo\'q</div>';return;}
-  let html=`<div class="sub-header">Jami: ${txs.length} ta amal</div><div class="tx-list">`;
-  txs.forEach(t=>{html+=txItem(t,t.type,true);});
-  html+='</div>';
-  el.innerHTML=html;
+  if(!txs.length){ el.innerHTML='<div class="empty"><div class="ei">📋</div>Hech narsa yo\'q</div>'; return; }
+  let h=`<div style="font-size:13px;color:var(--text2);margin-bottom:8px">Jami: ${txs.length} ta</div><div class="txl">`;
+  txs.forEach(t=>{ h+=txi(t,t.type,true); });
+  h+='</div>';
+  el.innerHTML=h;
 }
+
+// ── STATS ────────────────────────────────────────────────
 async function loadStats(){
-  const el=document.getElementById('stats-content');
-  el.innerHTML='<div class="loader"><div class="spinner"></div>Yuklanmoqda...</div>';
-  const [data,bal]=await Promise.all([apiFetch('/stats'),apiFetch('/balance')]);
-  if(!data){el.innerHTML='<div class="empty">❌ Xato</div>';return;}
+  const el = document.getElementById('stats-content');
+  el.innerHTML='<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
+  const [data,bal] = await Promise.all([api('/stats'),api('/balance')]);
+  if(!data){ el.innerHTML='<div class="empty">❌ Xato</div>'; return; }
   const ch=data.chiqim||{}, ki=data.kirim||{};
   const balFmt=(bal?.formatted)||'—';
-  let html=`<div class="grid2">
-    <div class="stat-card"><div class="stat-label">📤 Jami chiqim</div><div class="stat-value red">${Math.round(ch.total_usd||0)}$</div></div>
-    <div class="stat-card"><div class="stat-label">📥 Jami kirim</div><div class="stat-value green">${Math.round(ki.total_usd||0)}$</div></div>
+  let h=`<div class="grid2">
+    <div class="sc"><div class="sc-lbl">📤 Jami chiqim</div><div class="sc-val r">${Math.round(ch.total_usd||0)}$</div></div>
+    <div class="sc"><div class="sc-lbl">📥 Jami kirim</div><div class="sc-val g">${Math.round(ki.total_usd||0)}$</div></div>
   </div>
-  <div class="stat-card" style="margin-bottom:12px"><div class="stat-label">💰 Joriy balans</div><div class="stat-value blue">${balFmt}</div></div>
-  <div class="stat-card" style="margin-bottom:12px"><div class="stat-label">💹 Sof farq</div><div class="stat-value ${(data.net||0)>=0?'green':'red'}">${(data.net||0)>=0?'+':''}${Math.round(data.net||0)}$</div></div>`;
-  const chTurs=(ch.by_tur||[]);
-  const kiTurs=(ki.by_tur||[]);
-  if(chTurs.length){html+='<div class="chart-wrap"><div class="chart-title">📤 Chiqim taqsimoti</div><canvas id="ch-chart"></canvas></div>';}
-  if(kiTurs.length){html+='<div class="chart-wrap"><div class="chart-title">📥 Kirim taqsimoti</div><canvas id="ki-chart"></canvas></div>';}
-  if(chTurs.length){html+='<div class="section-title">📤 Chiqim reytingi</div><div class="card">';chTurs.slice(0,6).forEach((x,i)=>{html+=`<div class="top-item"><span class="top-rank">${i+1}</span><span class="top-name">${EM[x[0]]||''} ${x[0]}</span><span class="top-val red">${Math.round(x[1])}$</span></div>`;});html+='</div>';}
-  if(kiTurs.length){html+='<div class="section-title">📥 Kirim reytingi</div><div class="card">';kiTurs.forEach((x,i)=>{html+=`<div class="top-item"><span class="top-rank">${i+1}</span><span class="top-name">${EM[x[0]]||''} ${x[0]}</span><span class="top-val green">${Math.round(x[1])}$</span></div>`;});html+='</div>';}
-  el.innerHTML=html;
-  if(chTurs.length){new Chart(document.getElementById('ch-chart'),{type:'doughnut',data:{labels:chTurs.map(x=>x[0]),datasets:[{data:chTurs.map(x=>Math.round(x[1])),backgroundColor:['#ff3b30','#ff9500','#ffcc00','#ff6b6b','#e74c3c','#d35400','#e67e22','#f39c12','#c0392b','#FF6633','#FF33FF','#FFFF99']}]},options:{plugins:{legend:{display:false}},cutout:'60%'}});}
-  if(kiTurs.length){new Chart(document.getElementById('ki-chart'),{type:'doughnut',data:{labels:kiTurs.map(x=>x[0]),datasets:[{data:kiTurs.map(x=>Math.round(x[1])),backgroundColor:['#34c759','#4cd964','#5ac8fa','#007aff','#1e90ff','#00b4d8']}]},options:{plugins:{legend:{display:false}},cutout:'60%'}});}
+  <div class="sc" style="margin-bottom:12px"><div class="sc-lbl">💰 Joriy balans</div><div class="sc-val b">${balFmt}</div></div>
+  <div class="sc" style="margin-bottom:12px"><div class="sc-lbl">💹 Sof farq</div><div class="sc-val ${(data.net||0)>=0?'g':'r'}">${(data.net||0)>=0?'+':''}${Math.round(data.net||0)}$</div></div>`;
+  const ct=(ch.by_tur||[]), kt=(ki.by_tur||[]);
+  if(ct.length) h+='<div class="cw"><div class="ct">📤 Chiqim taqsimoti</div><canvas id="ch-c"></canvas></div>';
+  if(kt.length) h+='<div class="cw"><div class="ct">📥 Kirim taqsimoti</div><canvas id="ki-c"></canvas></div>';
+  if(ct.length){ h+='<div class="sec">📤 Chiqim reytingi</div><div class="card">'; ct.slice(0,8).forEach((x,i)=>{h+=`<div class="ti"><span style="color:var(--text3);width:20px;font-size:12px">${i+1}</span><span class="ti-n">${EM[x[0]]||''} ${x[0]}</span><span class="ti-v r">${Math.round(x[1])}$</span></div>`;}); h+='</div>'; }
+  if(kt.length){ h+='<div class="sec">📥 Kirim reytingi</div><div class="card">'; kt.forEach((x,i)=>{h+=`<div class="ti"><span style="color:var(--text3);width:20px;font-size:12px">${i+1}</span><span class="ti-n">${EM[x[0]]||''} ${x[0]}</span><span class="ti-v g">${Math.round(x[1])}$</span></div>`;}); h+='</div>'; }
+  el.innerHTML=h;
+  const COLORS_C=['#ff3b30','#ff9500','#ffcc00','#ff6b6b','#e74c3c','#d35400','#e67e22','#f39c12','#c0392b','#FF6633','#FF33FF','#FFFF99'];
+  const COLORS_K=['#34c759','#4cd964','#5ac8fa','#007aff','#1e90ff','#00b4d8'];
+  if(ct.length){ try{ new Chart(document.getElementById('ch-c'),{type:'doughnut',data:{labels:ct.map(x=>x[0]),datasets:[{data:ct.map(x=>Math.round(x[1])),backgroundColor:COLORS_C}]},options:{plugins:{legend:{display:false}},cutout:'60%'}}); }catch(e){} }
+  if(kt.length){ try{ new Chart(document.getElementById('ki-c'),{type:'doughnut',data:{labels:kt.map(x=>x[0]),datasets:[{data:kt.map(x=>Math.round(x[1])),backgroundColor:COLORS_K}]},options:{plugins:{legend:{display:false}},cutout:'60%'}}); }catch(e){} }
 }
-function openEdit(row,sheet,tStr){
-  const t=JSON.parse(decodeURIComponent(tStr));
-  state.editRow=row;state.editSheet=sheet;
-  const valyuta=(t.usd||0)>0?'USD':'UZS';
-  const summa=(t.usd||0)>0?t.usd:t.uzs;
-  document.getElementById('edit-content').innerHTML=`
-    <div class="form-group"><div class="label">Tur: <b>${EM[t.tur]||''} ${t.tur}</b> &nbsp; Egasi: <b>${t.egasi}</b></div></div>
-    <div class="form-group"><label class="form-label">Valyuta</label><div class="btn-grid col2"><button class="sel-btn${valyuta==='USD'?' active':''}" onclick="selBtn('valyuta',this)">💵 USD</button><button class="sel-btn${valyuta==='UZS'?' active':''}" onclick="selBtn('valyuta',this)">🇺🇿 UZS</button></div></div>
-    <div class="form-group"><label class="form-label">Summa</label><input type="number" id="e-summa" value="${summa||0}"></div>
-    <div class="form-group"><label class="form-label">Note</label><input type="text" id="e-note" value="${t.note||''}"></div>
-    <button class="submit-btn" onclick="saveEdit()">💾 Saqlash</button>`;
+
+// ── EDIT ─────────────────────────────────────────────────
+function openEdit(row, sheet, usd, uzs, note){
+  edt.row=row; edt.sheet=sheet;
+  edt.valyuta = usd>0?'USD':'UZS';
+  const summa = usd>0?usd:uzs;
+  document.getElementById('edit-body').innerHTML=`
+    <div class="fg"><label class="fl">Valyuta</label>
+      <div class="bg c2">
+        <button class="sb${edt.valyuta==='USD'?' on':''}" onclick="edt.valyuta='USD';this.parentElement.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));this.classList.add('on')">💵 USD</button>
+        <button class="sb${edt.valyuta==='UZS'?' on':''}" onclick="edt.valyuta='UZS';this.parentElement.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));this.classList.add('on')">🇺🇿 UZS</button>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Summa</label><input type="number" id="e-summa" value="${summa||0}"></div>
+    <div class="fg"><label class="fl">Note</label><input type="text" id="e-note" value="${note||''}"></div>
+    <button class="btn-sub" onclick="saveEdit()">💾 Saqlash</button>`;
   document.getElementById('edit-modal').classList.add('open');
 }
 async function saveEdit(){
-  const summa=parseFloat(document.getElementById('e-summa').value)||0;
-  const note=document.getElementById('e-note').value;
-  const body={summa,note,valyuta:state.valyuta};
+  const summa = parseFloat(document.getElementById('e-summa').value)||0;
+  const note  = document.getElementById('e-note').value;
   try{
-    const r=await fetch(`${API}/transaction/${state.editSheet}/${state.editRow}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const r=await fetch(`${API}/transaction/${edt.sheet}/${edt.row}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({summa,note,valyuta:edt.valyuta})});
     const res=await r.json();
-    if(res.success){closeModal();clearCache();loadHistory();loadToday();}
+    if(res.success){ closeMod(); clearCache(); loadHistory(); loadToday(); }
     else throw new Error(res.detail);
-  }catch(e){alert('Xato: '+e.message);}
+  }catch(e){ alert('Xato: '+e.message); }
 }
-function closeModal(){document.getElementById('edit-modal').classList.remove('open');}
-function sstr(u,z){const p=[];if((u||0)>0)p.push(Math.round(u)+'$');if((z||0)>0)p.push(fmtN(z)+" so'm");return p.join(' + ')||'0';}
-function fmtN(n){return Math.round(n).toLocaleString('ru-RU').replace(/\s/g,' ');}
-function txItem(t,sheet,editable=false){
+function closeMod(){ document.getElementById('edit-modal').classList.remove('open'); }
+
+// ── HELPERS ──────────────────────────────────────────────
+function ss(u,z){
+  const p=[];
+  if((u||0)>0) p.push(Math.round(u)+'$');
+  if((z||0)>0) p.push(fn(z)+" so'm");
+  return p.join(' + ')||'0';
+}
+function fn(n){ return Math.round(n).toLocaleString('ru-RU'); }
+function txi(t, sheet, editable=false){
   const u=t.usd||0, z=t.uzs||0;
-  const sum=u>0?Math.round(u)+'$':fmtN(z)+" so'm";
-  const color=sheet==='CHIQIM'?'red':'green';
-  const badge=sheet==='CHIQIM'?'ch':'ki';
-  const sign=sheet==='CHIQIM'?'-':'+';
-  const tStr=encodeURIComponent(JSON.stringify(t));
-  const onclick=editable?`onclick="openEdit(${t.row},'${sheet}','${tStr}')"` : '';
-  return `<div class="tx-item" ${onclick}>
-    <div class="tx-left">
-      <div class="tx-tur">${EM[t.tur]||''} ${t.tur}</div>
-      <div class="tx-meta"><span class="badge ${badge}">${sheet}</span>${t.egasi||''} · ${t.sana||''}</div>
-      ${t.note?`<div class="tx-note">${t.note}</div>`:''}
+  const sum=u>0?Math.round(u)+'$':fn(z)+" so'm";
+  const clr=sheet==='CHIQIM'?'r':'g';
+  const bdg=sheet==='CHIQIM'?'c':'k';
+  const sgn=sheet==='CHIQIM'?'-':'+';
+  const oc=editable?`onclick="openEdit(${t.row},'${sheet}',${u},${z},'${(t.note||'').replace(/'/g,"\\'")}')"`:'';
+  return `<div class="txi" ${oc}>
+    <div class="tx-l">
+      <div class="tx-t">${EM[t.tur]||''} ${t.tur}</div>
+      <div class="tx-m"><span class="bdg ${bdg}">${sheet}</span>${t.egasi||''} · ${t.sana||''}</div>
+      ${t.note?`<div class="tx-n">${t.note}</div>`:''}
     </div>
-    <div class="tx-right">
-      <div class="tx-sum ${color}">${sign}${sum}</div>
-      <div class="tx-note">${t.tolov||''}</div>
+    <div class="tx-r">
+      <div class="tx-s ${clr}">${sgn}${sum}</div>
+      <div class="tx-n">${t.tolov||''}</div>
     </div>
   </div>`;
 }
+
+// ── INIT ─────────────────────────────────────────────────
 initForm();
 loadToday();
 </script>
