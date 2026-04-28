@@ -92,7 +92,44 @@ canvas{max-height:220px}
   <div class="form-group"><label class="form-label">Note (ixtiyoriy)</label><input type="text" id="f-note" placeholder="Izoh..."></div>
   <button class="submit-btn" onclick="submitForm()">✅ Saqlash</button>
 </div>
-<div id="p-filter" class="page"><div class="header">Qidiruv 🔍</div><div class="filter-row"><input type="date" id="filter-date" class="filter-input"><button class="filter-btn" onclick="loadFilter()">Ko'rsatish</button></div><div id="filter-content"><div class="empty"><div class="empty-icon">📅</div>Sanani tanlang</div></div></div>
+<div id="p-filter" class="page">
+  <div class="header">Qidiruv 🔍</div>
+  <div class="card" style="margin-bottom:12px">
+    <div class="form-group">
+      <label class="form-label">Amal turi</label>
+      <div class="btn-grid col2">
+        <button class="sel-btn active" id="ft-chiqim" onclick="selFilter('tip','CHIQIM',this)">📤 Chiqim</button>
+        <button class="sel-btn" id="ft-kirim" onclick="selFilter('tip','KIRIM',this)">📥 Kirim</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Davr</label>
+      <div class="btn-grid col2">
+        <button class="sel-btn active" onclick="selFilter('davr','bu_oy',this)">Bu oy</button>
+        <button class="sel-btn" onclick="selFilter('davr','otgan_oy',this)">O'tgan oy</button>
+        <button class="sel-btn" onclick="selFilter('davr','bu_yil',this)">Bu yil</button>
+        <button class="sel-btn" onclick="selFilter('davr','hammasi',this)">Hammasi</button>
+        <button class="sel-btn" onclick="selFilter('davr','custom',this)" style="grid-column:span 2">📆 O'z sanani kiritish</button>
+      </div>
+    </div>
+    <div id="custom-range" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Dan</label>
+        <input type="date" id="f-date-from" class="filter-input" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Gacha</label>
+        <input type="date" id="f-date-to" class="filter-input" style="width:100%">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" id="tur-filter-label">Xarajat turi</label>
+      <div id="filter-tur-grid" class="btn-grid col2"></div>
+    </div>
+    <button class="submit-btn" onclick="loadFilter()">🔍 Ko'rsatish</button>
+  </div>
+  <div id="filter-content"><div class="empty"><div class="empty-icon">📅</div>Yuqorida filter tanlang</div></div>
+</div>
 <div id="p-history" class="page"><div class="header">Tarix 📋</div><div id="history-content"><div class="loader"><div class="spinner"></div>Yuklanmoqda...</div></div></div>
 <div id="p-stats" class="page"><div class="header">Statistika 📈</div><div id="stats-content"><div class="loader"><div class="spinner"></div>Yuklanmoqda...</div></div></div>
 <nav class="nav">
@@ -123,18 +160,18 @@ function goPage(n,btn){
   if(n==='history') loadHistory();
   if(n==='stats') loadStats();
   if(n==='add') initForm();
-  if(n==='filter'){ document.getElementById('filter-date').value=new Date().toLocaleDateString('en-CA'); }
+  if(n==='filter'){ renderFilterTurs(); }
 }
 
 const _cache={};
 async function apiFetch(url, ttl=60000){
   const now=Date.now();
-  if(_cache[url] && now-_cache[url].t < ttl) return _cache[url].d;
+  if(ttl>0 && _cache[url] && now-_cache[url].t < ttl) return _cache[url].d;
   try{
     const r=await fetch(API+url);
     if(!r.ok) return null;
     const d=await r.json();
-    _cache[url]={d,t:now};
+    if(ttl>0) _cache[url]={d,t:now};
     return d;
   }catch{return null;}
 }
@@ -160,6 +197,61 @@ async function loadToday(){
     if(!chs.length&&!kis.length){html+='<div class="empty"><div class="empty-icon">🌙</div>Bugun hech narsa yo\'q</div>';}
     el.innerHTML=html;
   }catch(e){el.innerHTML='<div class="empty">❌ Xato: '+e.message+'</div>';}
+}
+
+const fstate = {tip:'CHIQIM', davr:'bu_oy', tur:'BARCHASI'};
+
+function selFilter(key, val, btn){
+  fstate[key] = val;
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.sel-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(key==='davr'){
+    document.getElementById('custom-range').style.display = val==='custom'?'block':'none';
+  }
+  if(key==='tip') renderFilterTurs();
+}
+
+function renderFilterTurs(){
+  const turs = fstate.tip==='CHIQIM'
+    ? ['BARCHASI','OZIQ OVQAT','BENZIN','RASSROCHKA','KIYIM KECHAK','XURSHIDGA','ISHXONAMGA','UYDAGILARGA','SHTRAFLAR','SHOPPPING','ISHXONA REG','SARTAROSH','BOSHQA']
+    : ['BARCHASI','ISHXONA','SEEDBEE','BUSINESS','UYDAGILAR','BOSHQA'];
+  const grid = document.getElementById('filter-tur-grid');
+  grid.className = 'btn-grid col2';
+  grid.innerHTML = turs.map(t=>`<button class="sel-btn${fstate.tur===t?' active':''}" onclick="fstate.tur='${t}';renderFilterTurs()">${EM[t]||''} ${t==='BARCHASI'?'📋 Barchasi':t}</button>`).join('');
+  document.getElementById('tur-filter-label').textContent = fstate.tip==='CHIQIM'?'Xarajat turi':'Kirim turi';
+}
+
+async function loadFilter(){
+  const el = document.getElementById('filter-content');
+  el.innerHTML='<div class="loader"><div class="spinner"></div>Yuklanmoqda...</div>';
+  let url = `/by-filter?tip=${fstate.tip}&davr=${fstate.davr}&tur=${encodeURIComponent(fstate.tur)}`;
+  if(fstate.davr==='custom'){
+    const df = document.getElementById('f-date-from').value;
+    const dt = document.getElementById('f-date-to').value;
+    if(!df||!dt){el.innerHTML='<div class="empty">❌ Ikkala sanani ham kiriting</div>';return;}
+    const [y1,m1,d1]=df.split('-'); const [y2,m2,d2]=dt.split('-');
+    url += `&date_from=${d1}.${m1}.${y1}&date_to=${d2}.${m2}.${y2}`;
+  }
+  const data = await apiFetch(url, 0); // no cache for filter
+  if(!data){el.innerHTML='<div class="empty">❌ Xato</div>';return;}
+  const rows = (data.rows||[]);
+  const davr_txt = {bu_oy:'Bu oy',otgan_oy:"O'tgan oy",bu_yil:'Bu yil',hammasi:'Hammasi',custom:'Maxsus sana'}[fstate.davr]||fstate.davr;
+  const tur_txt = fstate.tur==='BARCHASI'?'Barchasi':fstate.tur;
+  let html=`<div class="date-badge">${fstate.tip==='CHIQIM'?'📤':'📥'} ${davr_txt} · ${tur_txt}</div>`;
+  if(!rows.length){
+    html+='<div class="empty"><div class="empty-icon">🔍</div>Ma'lumot topilmadi</div>';
+  } else {
+    html+=`<div class="sub-header">Jami: ${rows.length} ta amal</div>`;
+    html+='<div class="tx-list">';
+    rows.forEach(t=>{html+=txItem(t,fstate.tip,true);});
+    html+='</div>';
+    html+=`<div class="card" style="margin-top:12px">
+      <div class="label">📊 JAMI</div>
+      <div class="value ${fstate.tip==='CHIQIM'?'red':'green'}">${sstr(data.total_usd||0, data.total_uzs||0)}</div>
+    </div>`;
+  }
+  el.innerHTML=html;
 }
 
 function initForm(){
