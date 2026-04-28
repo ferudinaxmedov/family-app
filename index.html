@@ -79,7 +79,7 @@ canvas{max-height:220px}
 </style>
 </head>
 <body>
-<div id="p-today" class="page active"><div class="header">Bugungi holat 📊</div><div id="today-content"><div class="loader"><div class="spinner"></div>Yuklanmoqda...</div></div></div>
+<div id="p-today" class="page active"><div class="header" style="display:flex;justify-content:space-between;align-items:center"><span>Bugungi holat 📊</span><button onclick="clearCache();loadToday()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 12px;color:var(--text2);font-size:12px;cursor:pointer">↻ Yangilash</button></div><div id="today-content"><div class="loader"><div class="spinner"></div>Yuklanmoqda...</div></div></div>
 <div id="p-add" class="page">
   <div class="header">Yangi amal ➕</div>
   <div class="form-group"><label class="form-label">Amal turi</label><div class="btn-grid col2"><button class="sel-btn active" onclick="selType('CHIQIM',this)">📤 Chiqim</button><button class="sel-btn" onclick="selType('KIRIM',this)">📥 Kirim</button></div></div>
@@ -123,11 +123,22 @@ function goPage(n,btn){
   if(n==='history') loadHistory();
   if(n==='stats') loadStats();
   if(n==='add') initForm();
+  if(n==='filter'){ document.getElementById('filter-date').value=new Date().toLocaleDateString('en-CA'); }
 }
 
-async function apiFetch(url){
-  try{const r=await fetch(API+url);if(!r.ok)return null;return await r.json();}catch{return null;}
+const _cache={};
+async function apiFetch(url, ttl=60000){
+  const now=Date.now();
+  if(_cache[url] && now-_cache[url].t < ttl) return _cache[url].d;
+  try{
+    const r=await fetch(API+url);
+    if(!r.ok) return null;
+    const d=await r.json();
+    _cache[url]={d,t:now};
+    return d;
+  }catch{return null;}
 }
+function clearCache(url){ if(url) delete _cache[url]; else Object.keys(_cache).forEach(k=>delete _cache[k]); }
 
 async function loadToday(){
   const el=document.getElementById('today-content');
@@ -192,7 +203,7 @@ async function submitForm(){
   try{
     const r=await fetch(API+'/transaction',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const res=await r.json();
-    if(res.success){btn.textContent='✅ Saqlandi!';setTimeout(()=>{btn.textContent='✅ Saqlash';btn.disabled=false;},2000);document.getElementById('f-summa').value='';document.getElementById('f-note').value='';}
+    if(res.success){btn.textContent='✅ Saqlandi!';clearCache();setTimeout(()=>{btn.textContent='✅ Saqlash';btn.disabled=false;},2000);document.getElementById('f-summa').value='';document.getElementById('f-note').value='';}
     else throw new Error(res.detail||'Xato');
   }catch(e){btn.textContent='✅ Saqlash';btn.disabled=false;alert('Xato: '+e.message);}
 }
@@ -268,7 +279,7 @@ async function saveEdit(){
   try{
     const r=await fetch(`${API}/transaction/${state.editSheet}/${state.editRow}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const res=await r.json();
-    if(res.success){closeModal();loadHistory();loadToday();}
+    if(res.success){closeModal();clearCache();loadHistory();loadToday();}
     else throw new Error(res.detail);
   }catch(e){alert('Xato: '+e.message);}
 }
