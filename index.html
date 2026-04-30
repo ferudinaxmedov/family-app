@@ -745,13 +745,29 @@ function switchQTab(tab, btn){
   renderQarzList();
 }
 async function closeQarzItem(rowIdx){
-  if(!confirm('Bu qarz qaytarilganmi?')) return;
+  const r = qarzData.find(x => x._row == rowIdx);
+  const tur = r ? r.tur : 'BERILGAN';
+  const confirmMsg = tur === 'BERILGAN'
+    ? `"${r?.kim||'?'}" qarzingizni qaytarib berdi?\nBalansga + qo'shiladi.`
+    : `"${r?.kim||'?'}" ga qarzingizni qaytardingizmi?\nBalansdan − ayriladi.`;
+  if(!confirm(confirmMsg)) return;
   try{
-    const res=await fetch(`${API}/qarz/close/${rowIdx}`,{method:'POST'});
-    const j=await res.json();
-    if(j.success){ await loadQarz(); }
-    else alert('❌ Xatolik: '+j.error);
-  }catch(e){ alert('❌ Xatolik: '+e.message); }
+    const res = await fetch(`${API}/qarz/close/${rowIdx}`, {method:'POST'});
+    const j   = await res.json();
+    if(j.success){
+      const icon   = j.effect === 'balance_plus' ? '✅💰' : '✅💸';
+      const effect = j.effect === 'balance_plus'
+        ? 'Balansga qaytdi (+)'
+        : 'Balansdan ayrildi (−)';
+      alert(`${icon} ${j.kim} bilan hisob-kitob yakunlandi!\n${effect}\n💰 Yangi balans: ${j.balance}$`);
+      clearCache();
+      await loadQarz();
+    } else {
+      alert('❌ Xatolik: ' + (j.error || 'Noma\'lum xato'));
+    }
+  }catch(e){
+    alert('❌ Xatolik: ' + e.message);
+  }
 }
 function openQarzModal(tur){
   document.getElementById('qarz-tur').value = tur;
