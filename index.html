@@ -109,6 +109,29 @@ canvas{max-height:220px}
 .btn-done{background:var(--green);border:none;border-radius:var(--rsm);padding:6px 12px;color:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
 .qarz-add-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 
+/* TASKS */
+.task-tabs{display:flex;gap:8px;margin-bottom:12px}
+.task-item{background:var(--card);border-radius:var(--rsm);padding:12px 14px;border:1px solid var(--border);margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.task-item.overdue{border-left:3px solid var(--red)}
+.task-item.done-item{opacity:.5}
+
+/* MEMORY */
+.mem-item{background:var(--card);border-radius:var(--rsm);padding:12px 14px;border:1px solid var(--border);margin-bottom:8px}
+.mem-key{font-size:14px;font-weight:600}
+.mem-val{font-size:13px;color:var(--blue);margin-top:3px}
+.mem-meta{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* NAMOZ */
+.namoz-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px}
+.namoz-item{background:var(--card);border-radius:var(--rsm);padding:10px 4px;border:1px solid var(--border);text-align:center}
+.namoz-item.next{border-color:var(--blue);background:rgba(0,122,255,.12)}
+.namoz-item.passed{opacity:.38}
+.n-emoji{font-size:20px;margin-bottom:3px}
+.n-name{font-size:10px;color:var(--text2);margin-bottom:3px}
+.n-time{font-size:13px;font-weight:700}
+.namoz-stat-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.namoz-stat-row:last-child{border-bottom:none}
+
 /* ADMIN */
 .cat-item{background:var(--card);border-radius:var(--rsm);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);margin-bottom:8px}
 .cat-name{font-size:14px;font-weight:500}
@@ -285,6 +308,57 @@ canvas{max-height:220px}
   <div id="admin-status" style="text-align:center;margin-top:8px;font-size:12px;color:var(--green)"></div>
 </div>
 
+<!-- ═══ TASKS PAGE ═══════════════════════════════════════ -->
+<div id="p-tasks" class="page">
+  <div class="hdr"><span>Tasklar 📋</span><button class="btn-ref" onclick="loadTasks()">↻</button></div>
+
+  <div class="card">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px">➕ Yangi task</div>
+    <div class="fg"><label class="fl">Vazifa</label><input type="text" id="t-matn" placeholder="Nima qilish kerak..."></div>
+    <div class="fg"><label class="fl">Vaqt</label><input type="datetime-local" id="t-vaqt"></div>
+    <div class="fg"><label class="fl">Kim uchun</label>
+      <div class="bg c3">
+        <button class="sb on" onclick="selTask(this,'FERUDIN')">👨 Ferudin</button>
+        <button class="sb" onclick="selTask(this,'GULOYIM')">👩 Guloyim</button>
+        <button class="sb" onclick="selTask(this,'IKKALASI')">👨‍👩 Ikkalasi</button>
+      </div>
+    </div>
+    <button class="btn-sub" onclick="addTask()">✅ Saqlash</button>
+  </div>
+
+  <div class="task-tabs">
+    <button class="qtab on" onclick="switchTaskTab('FAOL',this)">Faol</button>
+    <button class="qtab" onclick="switchTaskTab('BAJARILDI',this)">Bajarildi</button>
+    <button class="qtab" onclick="switchTaskTab('ALL',this)">Barchasi</button>
+  </div>
+  <div id="tasks-list"><div class="loader"><div class="sp"></div>Yuklanmoqda...</div></div>
+</div>
+
+<!-- ═══ MEMORY PAGE ══════════════════════════════════════ -->
+<div id="p-memory" class="page">
+  <div class="hdr">Xotira 🧠</div>
+
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input type="text" id="m-search" placeholder="Qidirish..." style="flex:1" onkeydown="if(event.key==='Enter')searchMemory()">
+    <button class="btn-sub" style="width:auto;padding:12px 16px;margin:0" onclick="searchMemory()">🔍</button>
+  </div>
+
+  <div class="card" style="margin-bottom:12px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px">➕ Xotiraga qo'shish</div>
+    <div class="fg"><label class="fl">Kalit</label><input type="text" id="m-kalit" placeholder="Masalan: Xurshid raqami"></div>
+    <div class="fg"><label class="fl">Qiymat</label><input type="text" id="m-qiymat" placeholder="Masalan: +998901234567"></div>
+    <button class="btn-sub" onclick="saveMemory()">💾 Saqlash</button>
+  </div>
+
+  <div id="memory-list"><div class="loader"><div class="sp"></div>Yuklanmoqda...</div></div>
+</div>
+
+<!-- ═══ NAMOZ PAGE ═══════════════════════════════════════ -->
+<div id="p-namoz" class="page">
+  <div class="hdr"><span>Namoz 🕌</span><button class="btn-ref" onclick="loadNamoz()">↻</button></div>
+  <div id="namoz-content"><div class="loader"><div class="sp"></div>Yuklanmoqda...</div></div>
+</div>
+
 <!-- ═══ NAV ══════════════════════════════════════════════ -->
 <nav class="nav">
   <button class="nav-btn active" onclick="goPage('today',this)">
@@ -307,6 +381,15 @@ canvas{max-height:220px}
   </button>
   <button class="nav-btn" onclick="goPage('admin',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>Admin
+  </button>
+  <button class="nav-btn" onclick="goPage('tasks',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Tasklar
+  </button>
+  <button class="nav-btn" onclick="goPage('memory',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a9 9 0 1 0 9 9"/><path d="M12 6v6l4 2"/></svg>Xotira
+  </button>
+  <button class="nav-btn" onclick="goPage('namoz',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Namoz
   </button>
 </nav>
 
@@ -438,6 +521,9 @@ function goPage(name, btn){
   if(name==='filter')  initFilter();
   if(name==='qarz')    loadQarz();
   if(name==='admin')   loadAdmin();
+  if(name==='tasks')   loadTasks();
+  if(name==='memory')  loadMemory();
+  if(name==='namoz')   loadNamoz();
 }
 
 // ── TODAY ────────────────────────────────────────────────
@@ -914,6 +1000,171 @@ function txi(t, sheet, editable=false){
       <div class="tx-n">${t.tolov||''}</div>
     </div>
   </div>`;
+}
+
+// ── TASKS ────────────────────────────────────────────────
+const taskSt = {egasi:'FERUDIN'};
+let taskTab = 'FAOL';
+
+function selTask(btn, val){
+  btn.parentElement.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  taskSt.egasi = val;
+}
+function switchTaskTab(tab, btn){
+  taskTab = tab;
+  document.querySelectorAll('.task-tabs .qtab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  loadTasks();
+}
+async function loadTasks(){
+  const el = document.getElementById('tasks-list');
+  el.innerHTML = '<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
+  const data = await api(`/tasks?status=${taskTab}`, 0);
+  if(!data){ el.innerHTML='<div class="empty">❌ Xato</div>'; return; }
+  const tasks = data.tasks || [];
+  if(!tasks.length){
+    el.innerHTML = `<div class="empty"><div class="ei">📋</div>${taskTab==='FAOL'?"Faol task yo'q":'Task yo\'q'}</div>`;
+    return;
+  }
+  el.innerHTML = tasks.map(t => {
+    const ovCls  = t.overdue ? ' overdue' : '';
+    const dnCls  = t.holat === 'BAJARILDI' ? ' done-item' : '';
+    const doneBtn = t.holat === 'FAOL'
+      ? `<button class="btn-done" style="padding:5px 10px" onclick="taskDone(${t.row})">✅</button>`
+      : `<span style="font-size:11px;color:var(--text3)">✓</span>`;
+    return `<div class="task-item${ovCls}${dnCls}">
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:500">📋 ${t.matn}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px">⏰ ${t.vaqt} · 👤 ${t.egasi}</div>
+        ${t.overdue?'<span style="color:var(--red);font-size:11px">⚠️ Muddati o\'tdi</span>':''}
+      </div>
+      <div>${doneBtn}</div>
+    </div>`;
+  }).join('');
+}
+async function addTask(){
+  const matn = document.getElementById('t-matn').value.trim();
+  const rawV = document.getElementById('t-vaqt').value;
+  if(!matn){ alert('Vazifa matnini kiriting!'); return; }
+  if(!rawV){ alert('Vaqtni kiriting!'); return; }
+  const dt   = new Date(rawV);
+  const pad  = n => String(n).padStart(2,'0');
+  const vaqt = `${pad(dt.getDate())}.${pad(dt.getMonth()+1)}.${dt.getFullYear()} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+  const btn  = document.querySelector('#p-tasks .btn-sub');
+  btn.textContent = '⏳ Saqlanmoqda...'; btn.disabled = true;
+  try{
+    const r = await fetch(`${API}/tasks`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({matn,vaqt,egasi:taskSt.egasi})});
+    const j = await r.json();
+    if(j.success){ document.getElementById('t-matn').value=''; document.getElementById('t-vaqt').value=''; btn.textContent='✅ Saqlandi!'; setTimeout(()=>{btn.textContent='✅ Saqlash';btn.disabled=false;},1500); loadTasks(); }
+    else throw new Error(j.detail||'Xato');
+  }catch(e){ btn.textContent='✅ Saqlash'; btn.disabled=false; alert('❌ '+e.message); }
+}
+async function taskDone(row){
+  if(!confirm('Bajarildi deb belgilash?')) return;
+  try{
+    const r = await fetch(`${API}/tasks/done/${row}`,{method:'POST'});
+    const j = await r.json();
+    if(j.success) loadTasks();
+  }catch(e){ alert('❌ '+e.message); }
+}
+
+// ── MEMORY ───────────────────────────────────────────────
+async function loadMemory(q=''){
+  const el = document.getElementById('memory-list');
+  el.innerHTML = '<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
+  const url  = q ? `/memory?q=${encodeURIComponent(q)}` : '/memory';
+  const data = await api(url, 0);
+  if(!data){ el.innerHTML='<div class="empty">❌ Xato</div>'; return; }
+  const mems = data.memories || [];
+  if(!mems.length){
+    el.innerHTML = q
+      ? `<div class="empty"><div class="ei">🔍</div>"${q}" topilmadi</div>`
+      : '<div class="empty"><div class="ei">🧠</div>Xotira bo\'sh</div>';
+    return;
+  }
+  el.innerHTML = mems.map(m=>`
+    <div class="mem-item">
+      <div class="mem-key">📌 ${m.kalit}</div>
+      <div class="mem-val">${m.qiymat}</div>
+      <div class="mem-meta">${m.sana||''} · ${m.kim||''}</div>
+    </div>`).join('');
+}
+function searchMemory(){
+  const q = document.getElementById('m-search').value.trim();
+  loadMemory(q);
+}
+async function saveMemory(){
+  const kalit  = document.getElementById('m-kalit').value.trim();
+  const qiymat = document.getElementById('m-qiymat').value.trim();
+  if(!kalit||!qiymat){ alert('Kalit va qiymatni kiriting!'); return; }
+  const btn = document.querySelector('#p-memory .btn-sub:last-of-type');
+  btn.textContent='⏳ Saqlanmoqda...'; btn.disabled=true;
+  try{
+    const r = await fetch(`${API}/memory`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kalit,qiymat,kim:'FERUDIN'})});
+    const j = await r.json();
+    if(j.success){ document.getElementById('m-kalit').value=''; document.getElementById('m-qiymat').value=''; btn.textContent=j.action==='updated'?'✅ Yangilandi!':'✅ Saqlandi!'; setTimeout(()=>{btn.textContent='💾 Saqlash';btn.disabled=false;},1500); loadMemory(); }
+    else throw new Error(j.detail||'Xato');
+  }catch(e){ btn.textContent='💾 Saqlash'; btn.disabled=false; alert('❌ '+e.message); }
+}
+
+// ── NAMOZ ────────────────────────────────────────────────
+const NAMOZ_DEF = [
+  {key:'bomdod',name:'Bomdod',emoji:'🌅',api:'Fajr'},
+  {key:'peshin',name:'Peshin',emoji:'☀️',api:'Dhuhr'},
+  {key:'asr',   name:'Asr',   emoji:'🌤',api:'Asr'},
+  {key:'shom',  name:'Shom',  emoji:'🌇',api:'Maghrib'},
+  {key:'xufton',name:'Xufton',emoji:'🌙',api:'Isha'},
+];
+async function loadNamoz(){
+  const el = document.getElementById('namoz-content');
+  el.innerHTML = '<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
+  try{
+    const now = new Date();
+    const pad = n=>String(n).padStart(2,'0');
+    const d=pad(now.getDate()), m=pad(now.getMonth()+1), y=now.getFullYear();
+    const [pRes, sRes] = await Promise.all([
+      fetch(`https://api.aladhan.com/v1/timings/${d}-${m}-${y}?latitude=41.2995&longitude=69.2401&method=3`).then(r=>r.json()).catch(()=>null),
+      fetch(`${API}/namoz/stats`).then(r=>r.json()).catch(()=>null)
+    ]);
+    let h = `<div class="dbdg">📅 ${d}.${m}.${y} — Toshkent</div>`;
+    // Namoz vaqtlari
+    if(pRes?.data?.timings){
+      const t = pRes.data.timings;
+      const nowM = now.getHours()*60+now.getMinutes();
+      let nextIdx = -1;
+      const times = NAMOZ_DEF.map(n=>({...n,time:(t[n.api]||'').slice(0,5)}));
+      times.forEach((n,i)=>{ const [hh,mm]=(n.time||'00:00').split(':').map(Number); if(hh*60+mm>nowM&&nextIdx===-1) nextIdx=i; });
+      h += '<div class="namoz-grid">';
+      times.forEach((n,i)=>{
+        const [hh,mm]=(n.time||'00:00').split(':').map(Number);
+        const passed=hh*60+mm<nowM, next=i===nextIdx;
+        h += `<div class="namoz-item${next?' next':''}${passed?' passed':''}">
+          <div class="n-emoji">${n.emoji}</div>
+          <div class="n-name">${n.name}</div>
+          <div class="n-time" style="color:${next?'var(--blue)':passed?'var(--text3)':'var(--text)'}">${n.time}</div>
+        </div>`;
+      });
+      h += '</div>';
+    }
+    // Haftalik statistika
+    if(sRes?.stats){
+      h += '<div class="sec">7 kunlik statistika</div>';
+      for(const kim of ['FERUDIN','GULOYIM']){
+        const sd = sRes.stats[kim]||{};
+        const totalOk = Object.values(sd).reduce((s,v)=>s+(v.ok||0),0);
+        h += `<div class="card"><div style="font-size:13px;font-weight:600;margin-bottom:8px">👤 ${kim} · ✅${totalOk}/35</div>`;
+        NAMOZ_DEF.forEach(n=>{
+          const v=sd[n.key]||{ok:0,no:0};
+          const tot=v.ok+v.no, pct=tot?Math.round(v.ok/tot*100):0;
+          const bar=tot?`<div style="height:3px;background:var(--border);border-radius:2px;margin-top:4px"><div style="height:100%;width:${pct}%;background:var(--green);border-radius:2px"></div></div>`:'';
+          h += `<div class="namoz-stat-row"><span>${n.emoji} ${n.name}</span><span style="font-size:12px">✅${v.ok} ❌${v.no} <span style="color:var(--text3)">${pct}%</span></span></div>${bar}`;
+        });
+        h += '</div>';
+      }
+    }
+    el.innerHTML = h;
+  }catch(e){ el.innerHTML=`<div class="empty">❌ ${e.message}</div>`; }
 }
 
 // ── INIT ─────────────────────────────────────────────────
