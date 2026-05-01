@@ -109,6 +109,12 @@ canvas{max-height:220px}
 .btn-done{background:var(--green);border:none;border-radius:var(--rsm);padding:6px 12px;color:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
 .qarz-add-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 
+/* HISTORY */
+.hist-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 2px 6px;font-size:13px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);margin:14px 0 6px}
+.hist-hdr:first-child{margin-top:0}
+.tx-new{background:var(--card);border-radius:var(--rsm);padding:11px 13px;border:1px solid var(--border);cursor:pointer;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tx-new:active{background:var(--bg3)}
+.tx-time{font-size:11px;color:var(--text3);min-width:34px}
 /* TASKS */
 .task-tabs{display:flex;gap:8px;margin-bottom:12px}
 .task-item{background:var(--card);border-radius:var(--rsm);padding:12px 14px;border:1px solid var(--border);margin-bottom:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
@@ -646,15 +652,54 @@ async function runFilter(){
 async function loadHistory(){
   const el=document.getElementById('history-content');
   el.innerHTML='<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
-  const data=await api('/history?limit=150');
+  const data=await api('/history?limit=200');
   if(!data){ el.innerHTML='<div class="empty"><div class="ei">❌</div>Xato</div>'; return; }
-  // yangi → eski tartib (API allaqachon tartiblaydi)
   const txs=(data.transactions||[]).filter(t=>(t.usd||0)>0||(t.uzs||0)>0);
   if(!txs.length){ el.innerHTML='<div class="empty"><div class="ei">📋</div>Hech narsa yo\'q</div>'; return; }
-  let h=`<div style="font-size:13px;color:var(--text2);margin-bottom:8px">Jami: ${txs.length} ta</div><div class="txl">`;
-  txs.forEach(t=>{ h+=txi(t,t.type,true); });
-  h+='</div>';
+
+  // Sana bo'yicha guruhlash
+  const grp={};
+  txs.forEach(t=>{ const s=t.sana||'?'; if(!grp[s]) grp[s]=[]; grp[s].push(t); });
+  const dates=Object.keys(grp).sort((a,b)=>{
+    const p=s=>{const[d,m,y]=s.split('.');return new Date(+y,+m-1,+d);};
+    return p(b)-p(a);
+  });
+
+  let h=`<div style="font-size:12px;color:var(--text2);margin-bottom:10px">Jami: ${txs.length} ta amal</div>`;
+  dates.forEach(sana=>{
+    const items=grp[sana];
+    let dCh=0,dKi=0;
+    items.forEach(t=>{ if(t.type==='CHIQIM') dCh+=(t.usd||0)+(t.uzs||0)/12000; else dKi+=(t.usd||0)+(t.uzs||0)/12000; });
+    const net=dKi-dCh;
+    const netStr=net>=0?`<span style="color:var(--green)">+${Math.round(net)}$</span>`:`<span style="color:var(--red)">${Math.round(net)}$</span>`;
+    h+=`<div class="hist-hdr"><span>📅 ${sana}</span><span style="font-size:11px">${items.length} ta · ${netStr}</span></div>`;
+    items.forEach(t=>{ h+=txHist(t); });
+  });
   el.innerHTML=h;
+}
+
+function txHist(t){
+  const isCh=t.type==='CHIQIM';
+  const hasU=(t.usd||0)>0, hasZ=(t.uzs||0)>0;
+  // Ranglar: UZS chiqim=qizil, UZS kirim=yashil, USD chiqim=orange, USD kirim=ko'k
+  let amt='';
+  if(hasU) amt+=`<span style="color:${isCh?'var(--orange)':'var(--blue)'};font-weight:600">${isCh?'-':'+'}${Math.round(t.usd)}$</span>`;
+  if(hasZ){
+    if(amt) amt+=' ';
+    amt+=`<span style="color:${isCh?'var(--red)':'var(--green)'};font-weight:600">${isCh?'-':'+'}${fn(t.uzs)} so'm</span>`;
+  }
+  const time=t.vaqt?`<span class="tx-time">${t.vaqt}</span>`:'<span class="tx-time">—</span>';
+  const ds=JSON.stringify({usd:t.usd||0,uzs:t.uzs||0,note:t.note||'',egasi:t.egasi||'',tolov:t.tolov||'',tur:t.tur||'',sana:t.sana||''}).replace(/"/g,'&quot;');
+  return `<div class="tx-new" onclick="openEdit(${t.row},'${t.type}',JSON.parse(this.dataset.tx))" data-tx="${ds}">
+    <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+      ${time}
+      <div style="min-width:0">
+        <div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${EM[t.tur]||''} ${t.tur}</div>
+        <div style="font-size:11px;color:var(--text2)">${t.egasi||''} · ${t.tolov||''}${t.note?` · ${t.note}`:''}</div>
+      </div>
+    </div>
+    <div style="text-align:right;white-space:nowrap">${amt}</div>
+  </div>`;
 }
 
 // ── STATS ────────────────────────────────────────────────
