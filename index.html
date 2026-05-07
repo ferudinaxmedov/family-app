@@ -456,6 +456,18 @@ canvas{max-height:220px}
   </div>
 </div>
 
+<!-- ═══ DETAIL MODAL ══════════════════════════════════════ -->
+<div class="mo" id="detail-modal" onclick="if(event.target===this)closeDetail()">
+  <div class="md" style="max-height:80vh">
+    <div class="mdh"><span class="mdt" id="detail-modal-title">Tranzaksiya 📋</span><button class="mdc" onclick="closeDetail()">×</button></div>
+    <div id="detail-content"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px">
+      <button class="btn-sub" onclick="closeDetail();openEdit(_detRow,_detSheet,_detData)">✏️ Tahrirlash</button>
+      <button class="btn-sub red" onclick="closeDetail()">✕ Yopish</button>
+    </div>
+  </div>
+</div>
+
 <!-- ═══ ADMIN RENAME MODAL ══════════════════════════════ -->
 <div class="mo" id="rename-modal" onclick="if(event.target===this)closeRename()">
   <div class="md" style="max-height:50vh">
@@ -690,7 +702,7 @@ function txHist(t){
   }
   const time=t.vaqt?`<span class="tx-time">${t.vaqt}</span>`:'<span class="tx-time">—</span>';
   const ds=JSON.stringify({usd:t.usd||0,uzs:t.uzs||0,note:t.note||'',egasi:t.egasi||'',tolov:t.tolov||'',tur:t.tur||'',sana:t.sana||''}).replace(/"/g,'&quot;');
-  return `<div class="tx-new" onclick="openEdit(${t.row},'${t.type}',JSON.parse(this.dataset.tx))" data-tx="${ds}">
+  return `<div class="tx-new" onclick="openDetail(${t.row},'${t.type}',JSON.parse(this.dataset.tx))" data-tx="${ds}">
     <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
       ${time}
       <div style="min-width:0">
@@ -803,6 +815,49 @@ async function saveEdit(){
   }catch(e){ alert('Xato: '+e.message); }
 }
 function closeMod(){ document.getElementById('edit-modal').classList.remove('open'); }
+
+// ── DETAIL MODAL ─────────────────────────────────────────
+let _detRow=0, _detSheet='', _detData={};
+function openDetail(row, sheet, data){
+  _detRow=row; _detSheet=sheet; _detData=data;
+  const isCh=sheet==='CHIQIM';
+  const u=data.usd||0, z=data.uzs||0;
+  let sumHtml='';
+  if(u>0) sumHtml+=`<span style="color:${isCh?'var(--red)':'var(--green)'};font-size:20px;font-weight:700">${isCh?'-':'+'}${Math.round(u)}$</span>`;
+  if(z>0){if(sumHtml) sumHtml+=' '; sumHtml+=`<span style="color:${isCh?'var(--red)':'var(--green)'};font-size:20px;font-weight:700">${isCh?'-':'+'}${fn(z)} so'm</span>`;}
+  const badge=isCh?'<span class="bdg c">CHIQIM</span>':'<span class="bdg k">KIRIM</span>';
+  document.getElementById('detail-modal-title').textContent=(isCh?'📤 ':'📥 ')+'Tranzaksiya';
+  document.getElementById('detail-content').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:12px;padding:4px 0">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2);font-size:13px">📅 Sana</span>
+        <span style="font-size:13px;font-weight:500">${data.sana||'—'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2);font-size:13px">🏷 Tur</span>
+        <span style="font-size:13px;font-weight:500">${EM[data.tur]||''} ${data.tur||'—'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2);font-size:13px">👤 Egasi</span>
+        <span style="font-size:13px;font-weight:500">${data.egasi||'—'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2);font-size:13px">💳 To'lov turi</span>
+        <span style="font-size:13px;font-weight:500">${data.tolov||'—'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2);font-size:13px">💰 Summa</span>
+        <span>${sumHtml||'—'}</span>
+      </div>
+      ${data.note?`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px"><span style="color:var(--text2);font-size:13px;white-space:nowrap">📝 Note</span><span style="font-size:13px;text-align:right">${data.note}</span></div>`:''}
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--text2);font-size:13px">📊 Tur</span>
+        <span>${badge}</span>
+      </div>
+    </div>`;
+  document.getElementById('detail-modal').classList.add('open');
+}
+function closeDetail(){ document.getElementById('detail-modal').classList.remove('open'); }
 
 // ── QARZ ────────────────────────────────────────────────
 async function loadQarz(){
@@ -1033,7 +1088,7 @@ function txi(t, sheet, editable=false){
   const sgn=sheet==='CHIQIM'?'-':'+';
   // openEdit ga to'liq data beramiz
   const dataStr = editable ? JSON.stringify({usd:u,uzs:z,note:t.note||'',egasi:t.egasi||'',tolov:t.tolov||'',tur:t.tur||'',sana:t.sana||''}).replace(/"/g,'&quot;') : '';
-  const oc=editable?`onclick="openEdit(${t.row},'${sheet}',JSON.parse(this.dataset.tx))" data-tx="${dataStr}"`:'';
+  const oc=editable?`onclick="openDetail(${t.row},'${sheet}',JSON.parse(this.dataset.tx))" data-tx="${dataStr}"`:'';
   return `<div class="txi" ${oc}>
     <div class="tx-l">
       <div class="tx-t">${EM[t.tur]||''} ${t.tur}</div>
@@ -1155,12 +1210,32 @@ async function saveMemory(){
 
 // ── NAMOZ ────────────────────────────────────────────────
 const NAMOZ_DEF = [
-  {key:'bomdod',name:'Bomdod',emoji:'🌅',api:'Fajr'},
-  {key:'peshin',name:'Peshin',emoji:'☀️',api:'Dhuhr'},
-  {key:'asr',   name:'Asr',   emoji:'🌤',api:'Asr'},
-  {key:'shom',  name:'Shom',  emoji:'🌇',api:'Maghrib'},
-  {key:'xufton',name:'Xufton',emoji:'🌙',api:'Isha'},
+  {key:'bomdod',name:'Bomdod',emoji:'🌅'},
+  {key:'peshin',name:'Peshin',emoji:'☀️'},
+  {key:'asr',   name:'Asr',   emoji:'🌤'},
+  {key:'shom',  name:'Shom',  emoji:'🌇'},
+  {key:'xufton',name:'Xufton',emoji:'🌙'},
 ];
+function getTashkentTimes(month, day){
+  const T=[
+    null,
+    [["06:45","13:10","15:38","17:30","18:52"],["06:40","13:13","15:50","17:42","19:04"],["06:32","13:16","16:04","17:57","19:19"]],
+    [["06:18","13:16","16:20","18:13","19:36"],["06:03","13:14","16:35","18:28","19:52"],["05:45","13:11","16:49","18:43","20:07"]],
+    [["05:26","13:07","17:02","18:57","20:21"],["05:05","13:02","17:14","19:10","20:35"],["04:44","12:56","17:26","19:24","20:50"]],
+    [["04:22","12:50","17:37","19:37","21:04"],["04:01","12:44","17:47","19:50","21:17"],["03:42","12:39","17:57","20:03","21:31"]],
+    [["03:27","12:35","18:05","20:14","21:43"],["03:17","12:33","18:12","20:24","21:54"],["03:12","12:32","18:18","20:32","22:02"]],
+    [["03:11","12:33","18:21","20:37","22:07"],["03:15","12:35","18:22","20:39","22:09"],["03:22","12:37","18:20","20:37","22:06"]],
+    [["03:32","12:39","18:16","20:31","22:00"],["03:44","12:40","18:09","20:22","21:49"],["03:57","12:40","18:00","20:11","21:36"]],
+    [["04:11","12:39","17:48","19:57","21:21"],["04:25","12:36","17:33","19:40","21:03"],["04:39","12:31","17:16","19:22","20:44"]],
+    [["04:53","12:25","16:57","19:02","20:23"],["05:07","12:18","16:37","18:41","20:01"],["05:20","12:10","16:15","18:18","19:37"]],
+    [["05:34","12:01","15:52","17:55","19:14"],["05:48","11:54","15:30","17:32","18:50"],["06:02","11:48","15:09","17:09","18:27"]],
+    [["06:16","11:44","14:50","16:48","18:07"],["06:29","11:42","14:35","16:32","17:51"],["06:40","11:43","14:25","16:22","17:42"]],
+    [["06:49","11:47","14:21","16:17","17:37"],["06:53","11:52","14:22","16:17","17:38"],["06:52","11:57","14:27","16:21","17:42"]],
+  ];
+  const p=T[month]||T[5];
+  const t=day<=10?p[0]:day<=20?p[1]:p[2];
+  return {Bomdod:t[0],Peshin:t[1],Asr:t[2],Shom:t[3],Xufton:t[4]};
+}
 async function loadNamoz(){
   const el = document.getElementById('namoz-content');
   el.innerHTML = '<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
@@ -1168,30 +1243,24 @@ async function loadNamoz(){
     const now = new Date();
     const pad = n=>String(n).padStart(2,'0');
     const d=pad(now.getDate()), m=pad(now.getMonth()+1), y=now.getFullYear();
-    const [pRes, sRes] = await Promise.all([
-      fetch(`https://api.aladhan.com/v1/timings/${d}-${m}-${y}?latitude=41.2995&longitude=69.2401&method=3`).then(r=>r.json()).catch(()=>null),
-      fetch(`${API}/namoz/stats`).then(r=>r.json()).catch(()=>null)
-    ]);
+    const sRes = await fetch(`${API}/namoz/stats`).then(r=>r.json()).catch(()=>null);
+    const pt = getTashkentTimes(now.getMonth()+1, now.getDate());
     let h = `<div class="dbdg">📅 ${d}.${m}.${y} — Toshkent</div>`;
-    // Namoz vaqtlari
-    if(pRes?.data?.timings){
-      const t = pRes.data.timings;
-      const nowM = now.getHours()*60+now.getMinutes();
-      let nextIdx = -1;
-      const times = NAMOZ_DEF.map(n=>({...n,time:(t[n.api]||'').slice(0,5)}));
-      times.forEach((n,i)=>{ const [hh,mm]=(n.time||'00:00').split(':').map(Number); if(hh*60+mm>nowM&&nextIdx===-1) nextIdx=i; });
-      h += '<div class="namoz-grid">';
-      times.forEach((n,i)=>{
-        const [hh,mm]=(n.time||'00:00').split(':').map(Number);
-        const passed=hh*60+mm<nowM, next=i===nextIdx;
-        h += `<div class="namoz-item${next?' next':''}${passed?' passed':''}">
-          <div class="n-emoji">${n.emoji}</div>
-          <div class="n-name">${n.name}</div>
-          <div class="n-time" style="color:${next?'var(--blue)':passed?'var(--text3)':'var(--text)'}">${n.time}</div>
-        </div>`;
-      });
-      h += '</div>';
-    }
+    const nowM = now.getHours()*60+now.getMinutes();
+    let nextIdx = -1;
+    const times = NAMOZ_DEF.map(n=>({...n,time:pt[n.name]||''}));
+    times.forEach((n,i)=>{ const [hh,mm]=(n.time||'00:00').split(':').map(Number); if(hh*60+mm>nowM&&nextIdx===-1) nextIdx=i; });
+    h += '<div class="namoz-grid">';
+    times.forEach((n,i)=>{
+      const [hh,mm]=(n.time||'00:00').split(':').map(Number);
+      const passed=hh*60+mm<nowM, next=i===nextIdx;
+      h += `<div class="namoz-item${next?' next':''}${passed?' passed':''}">
+        <div class="n-emoji">${n.emoji}</div>
+        <div class="n-name">${n.name}</div>
+        <div class="n-time" style="color:${next?'var(--blue)':passed?'var(--text3)':'var(--text)'}">${n.time}</div>
+      </div>`;
+    });
+    h += '</div>';
     // Haftalik statistika
     if(sRes?.stats){
       h += '<div class="sec">7 kunlik statistika</div>';
