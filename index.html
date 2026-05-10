@@ -133,11 +133,11 @@ body{
   justify-content:center;gap:4px;
   border:none;background:none;
   color:rgba(245,237,224,.28);
-  font-size:9px;font-weight:500;cursor:pointer;
+  font-size:10px;font-weight:500;cursor:pointer;
   transition:all .22s;position:relative;
   letter-spacing:.3px;
 }
-.nav-ico{font-size:21px;line-height:1;transition:transform .22s,filter .22s}
+.nav-ico{font-size:24px;line-height:1;transition:transform .22s,filter .22s}
 .nav-btn.active{color:var(--amber)}
 .nav-btn.active .nav-ico{transform:scale(1.12);filter:drop-shadow(0 0 8px rgba(245,158,11,.5))}
 .nav-btn.active::after{
@@ -174,7 +174,7 @@ body{
 
 /* Hero balance */
 .hero-card{
-  padding:24px;margin-bottom:12px;
+  padding:28px;margin-bottom:12px;
   background:linear-gradient(135deg,rgba(180,83,9,.18) 0%,rgba(245,158,11,.08) 50%,rgba(255,248,235,.04) 100%) !important;
   border-color:rgba(245,158,11,.25) !important;
 }
@@ -188,7 +188,7 @@ body{
   font-weight:600;margin-bottom:8px;
 }
 .hero-amt{
-  font-size:46px;font-weight:800;color:#fde68a;
+  font-size:52px;font-weight:800;color:#fde68a;
   letter-spacing:-2px;margin-bottom:20px;line-height:1;
   font-variant-numeric:tabular-nums;
 }
@@ -214,7 +214,7 @@ body{
   background:linear-gradient(135deg,rgba(255,248,235,.055) 0%,rgba(255,240,200,.025) 100%);
   backdrop-filter:blur(24px) saturate(140%);
   -webkit-backdrop-filter:blur(24px) saturate(140%);
-  border:1px solid rgba(255,220,140,.08);
+  border:1px solid rgba(255,200,100,.15);
   border-radius:var(--radius);overflow:hidden;
   transition:all .25s;
 }
@@ -229,10 +229,10 @@ body{
 .wcard-sub{font-size:11px;color:var(--text2);margin-top:3px}
 .wcard-sub.amber{color:var(--amber)}
 .wcard-sub.green{color:var(--green)}
-.wcard-namoz{border-color:rgba(216,180,254,.12) !important}
-.wcard-task{border-color:rgba(134,239,172,.1) !important}
-.wcard-qarz{border-color:rgba(252,165,165,.1) !important}
-.wcard-ai{border-color:rgba(147,197,253,.1) !important;grid-column:span 2}
+.wcard-namoz{border-left:3px solid rgba(216,180,254,.4) !important}
+.wcard-task{border-left:3px solid rgba(134,239,172,.4) !important}
+.wcard-qarz{border-left:3px solid rgba(252,165,165,.4) !important}
+.wcard-ai{border-left:3px solid rgba(147,197,253,.4) !important;grid-column:span 2}
 
 .wcard-ai-inner{display:flex;align-items:center;gap:14px}
 .wcard-ai-txt .wcard-val{font-size:16px}
