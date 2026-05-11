@@ -812,6 +812,65 @@ canvas{max-height:200px}
   </div>
 </div>
 
+<!-- ═══ BNB ════════════════════════════════════════════════ -->
+<div id="section-bnb" class="section" style="display:none">
+  <div class="top-tabs" style="padding:16px 16px 0">
+    <button class="top-tab active" onclick="showBnbTab('reg',this)">📋 Ro'yxat</button>
+    <button class="top-tab" onclick="showBnbTab('files',this)">📁 Fayllar</button>
+    <button class="top-tab" onclick="showBnbTab('history',this)">📊 Tarix</button>
+  </div>
+
+  <!-- REGISTRATION -->
+  <div id="bnb-reg" class="tab-content page" style="padding-top:12px">
+    <div class="hdr" style="padding-top:0">🏨 Registratsiya</div>
+    <div class="card" style="padding:16px;margin-bottom:12px">
+      <div class="sec-lbl" style="font-size:10px;color:rgba(245,237,224,.3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px">Kvartira tanlang</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px" id="bnb-apt-grid"></div>
+    </div>
+    <div class="card" style="padding:16px;margin-bottom:12px">
+      <div style="font-size:12px;color:rgba(245,237,224,.4);margin-bottom:10px">Mehmon ma'lumotlari</div>
+      <div id="bnb-guests"></div>
+      <button onclick="addBnbGuest()" style="background:none;border:none;color:rgba(245,158,11,.8);font-size:12px;cursor:pointer;padding:4px 0">+ Mehmon qo'shish</button>
+    </div>
+    <div class="card" style="padding:16px;margin-bottom:12px">
+      <div class="fg"><label class="fl">O'zbekistonga kirgan sana</label><input class="fi" type="date" id="bnb-uzbentry" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">Apartamentga kirgan sana</label><input class="fi" type="date" id="bnb-aptentry" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">Ketish sanasi</label><input class="fi" type="date" id="bnb-depart" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">To'lov miqdori</label><input class="fi" type="number" id="bnb-payment" placeholder="USD" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">Kim to'laydi</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="sb on" onclick="bnbPaySel(this,'airbnb')">🏡 AirBnB</button>
+          <button class="sb" onclick="bnbPaySel(this,'guest')">👤 Mehmon</button>
+        </div>
+      </div>
+    </div>
+    <button class="btn-sub" id="bnb-submit-btn" onclick="submitBnbReg()">📋 Ro'yxatga olish va hujjatlarni yuborish</button>
+  </div>
+
+  <!-- FILES -->
+  <div id="bnb-files" class="tab-content page" style="padding-top:12px;display:none">
+    <div class="hdr" style="padding-top:0">📁 Hujjatlar</div>
+    <div class="card" style="padding:16px;margin-bottom:12px">
+      <div style="font-size:11px;color:rgba(245,237,224,.35);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase">Ferudin shaxsiy hujjati</div>
+      <button onclick="sendBnbFile('ferudin','')" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer">
+        <span style="font-size:22px">🪪</span>
+        <div style="flex:1;text-align:left">
+          <div style="font-size:13px;font-weight:500;color:#f5ede0">Ferudin ID Card</div>
+          <div style="font-size:11px;color:rgba(245,237,224,.4)">Har doim bir xil fayl</div>
+        </div>
+        <span style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:5px 12px;font-size:11px;color:#f59e0b">📤 Yuborish</span>
+      </button>
+    </div>
+    <div id="bnb-files-list"></div>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="bnb-history" class="tab-content page" style="padding-top:12px;display:none">
+    <div class="hdr" style="padding-top:0"><span>Tarix 📊</span><button class="btn-ref" onclick="loadBnbHistory()">↻</button></div>
+    <div id="bnb-history-list"><div class="loader"><div class="sp"></div>Yuklanmoqda...</div></div>
+  </div>
+</div>
+
 <!-- ═══ ISLOM ══════════════════════════════════════════════ -->
 <div id="section-islom" class="section" style="display:none;padding:16px">
   <div class="hdr" style="padding:0 0 16px"><span>Namoz 🕌</span><button class="btn-ref" onclick="loadNamoz()">↻</button></div>
@@ -850,6 +909,9 @@ canvas{max-height:200px}
   </button>
   <button class="nav-btn" onclick="showSection('ishlar',this)">
     <span class="nav-ico">✅</span><span>Ishlar</span>
+  </button>
+  <button class="nav-btn" onclick="showSection('bnb',this)">
+    <span class="nav-ico">🏨</span><span>BnB</span>
   </button>
   <button class="nav-btn" onclick="showSection('islom',this)">
     <span class="nav-ico">🕌</span><span>Islom</span>
@@ -974,6 +1036,7 @@ function showSection(name,btn){
   if(name==='main')   loadDashboard();
   if(name==='islom')  loadNamoz();
   if(name==='ishlar') loadTasks();
+  if(name==='bnb')    initBnbSection();
 }
 
 function showHisobTab(name,btn){
@@ -1660,6 +1723,177 @@ document.addEventListener('DOMContentLoaded',()=>{
     }catch(e){}
   })();
 });
+
+// ── BNB ──────────────────────────────────────────────────
+const APTS = ["23","28","68","80","84","88","701"];
+let bnbState = {apt:"28", payBy:"airbnb", guests:[{name:"",nationality:"",dob:"",passportId:""}]};
+
+function initBnbSection(){
+  const grid = document.getElementById('bnb-apt-grid');
+  if(grid) grid.innerHTML = APTS.map(a=>`
+    <div onclick="selectBnbApt('${a}')" id="bapt-${a}" style="background:${a===bnbState.apt?'rgba(245,158,11,.2)':'rgba(255,248,235,.05)'};border:1px solid ${a===bnbState.apt?'rgba(245,158,11,.4)':'rgba(255,220,140,.1)'};border-radius:10px;padding:10px 4px;text-align:center;cursor:pointer">
+      <div style="font-size:16px;font-weight:700;color:#fde68a">${a}</div>
+      <div style="font-size:9px;color:rgba(245,237,224,.4);margin-top:2px">xona</div>
+    </div>`).join('');
+  renderBnbGuests();
+  renderBnbFiles();
+  const today = new Date().toLocaleDateString('en-CA');
+  const aptEl = document.getElementById('bnb-aptentry');
+  const uzbEl = document.getElementById('bnb-uzbentry');
+  if(aptEl && !aptEl.value) aptEl.value = today;
+  if(uzbEl && !uzbEl.value) uzbEl.value = today;
+}
+
+function selectBnbApt(apt){
+  bnbState.apt = apt;
+  APTS.forEach(a=>{
+    const el = document.getElementById('bapt-'+a);
+    if(el){
+      el.style.background = a===apt?'rgba(245,158,11,.2)':'rgba(255,248,235,.05)';
+      el.style.border = `1px solid ${a===apt?'rgba(245,158,11,.4)':'rgba(255,220,140,.1)'}`;
+    }
+  });
+  renderBnbFiles();
+}
+
+function bnbPaySel(btn, val){
+  bnbState.payBy = val;
+  btn.parentElement.querySelectorAll('.sb').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function renderBnbGuests(){
+  const el = document.getElementById('bnb-guests');
+  if(!el) return;
+  el.innerHTML = bnbState.guests.map((g,i)=>`
+    <div style="background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.07);border-radius:10px;padding:12px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:22px;height:22px;border-radius:50%;background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.2);font-size:11px;font-weight:600;color:#f59e0b;display:flex;align-items:center;justify-content:center">${i+1}</div>
+        <span style="font-size:13px;font-weight:500">Mehmon ${i+1}</span>
+        ${i>0?`<button onclick="removeBnbGuest(${i})" style="background:none;border:none;color:rgba(252,165,165,.6);font-size:12px;cursor:pointer;margin-left:auto">✕</button>`:''}
+      </div>
+      <div style="display:grid;gap:8px">
+        <input placeholder="Ism Familya" value="${g.name}" oninput="bnbState.guests[${i}].name=this.value" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:8px;padding:9px 12px;color:#f5ede0;font-size:13px">
+        <input placeholder="Fuqaroligi (masalan: KOREA)" value="${g.nationality}" oninput="bnbState.guests[${i}].nationality=this.value" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:8px;padding:9px 12px;color:#f5ede0;font-size:13px">
+        <input placeholder="Pasport raqami" value="${g.passportId}" oninput="bnbState.guests[${i}].passportId=this.value" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:8px;padding:9px 12px;color:#f5ede0;font-size:13px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <label style="font-size:11px;color:rgba(245,237,224,.4);white-space:nowrap">Tug'ilgan:</label>
+          <input type="date" value="${g.dob}" oninput="bnbState.guests[${i}].dob=this.value" style="flex:1;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:8px;padding:9px 12px;color:#f5ede0;font-size:13px">
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addBnbGuest(){
+  bnbState.guests.push({name:"",nationality:"",dob:"",passportId:""});
+  renderBnbGuests();
+}
+function removeBnbGuest(i){
+  bnbState.guests.splice(i,1);
+  renderBnbGuests();
+}
+
+function renderBnbFiles(){
+  const el = document.getElementById('bnb-files-list');
+  if(!el) return;
+  el.innerHTML = APTS.map(apt=>`
+    <div class="card" style="padding:14px;margin-bottom:10px">
+      <div style="font-size:11px;color:rgba(245,237,224,.35);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase">${apt}-xona hujjatlari</div>
+      <button onclick="sendBnbFile('ish','${apt}')" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:6px">
+        <span style="font-size:18px">📄</span>
+        <div style="flex:1;text-align:left"><div style="font-size:13px;font-weight:500;color:#f5ede0">Ishonchnoma ${apt}</div><div style="font-size:11px;color:rgba(245,237,224,.4)">PDF · Drive dan</div></div>
+        <span style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:4px 10px;font-size:11px;color:#f59e0b">📤</span>
+      </button>
+      <button onclick="sendBnbFile('cad','${apt}')" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;cursor:pointer">
+        <span style="font-size:18px">🗺️</span>
+        <div style="flex:1;text-align:left"><div style="font-size:13px;font-weight:500;color:#f5ede0">Kadastr ${apt}</div><div style="font-size:11px;color:rgba(245,237,224,.4)">PDF · Drive dan</div></div>
+        <span style="background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.25);border-radius:6px;padding:4px 10px;font-size:11px;color:#f59e0b">📤</span>
+      </button>
+    </div>`).join('');
+}
+
+async function sendBnbFile(fileType, apt){
+  const chatId = '1938508551';
+  const btn = event.currentTarget;
+  const lastSpan = btn.querySelector('span:last-child');
+  const orig = lastSpan?.textContent || '📤';
+  if(lastSpan) lastSpan.textContent='⏳';
+  try{
+    const r = await fetch(`${API}/bnb/send-file`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:chatId, file_type:fileType, apartment:apt})
+    });
+    const j = await r.json();
+    if(j.success){
+      if(lastSpan) lastSpan.textContent='✅';
+      setTimeout(()=>{if(lastSpan) lastSpan.textContent=orig;},2000);
+    } else alert('❌ Xatolik: '+(j.detail||'Fayl topilmadi'));
+  }catch(e){
+    alert('❌ '+e.message);
+    if(lastSpan) lastSpan.textContent=orig;
+  }
+}
+
+async function submitBnbReg(){
+  const guests = bnbState.guests;
+  if(!guests[0].name){alert('Mehmon ismini kiriting!');return;}
+  if(!guests[0].passportId){alert('Pasport raqamini kiriting!');return;}
+  const btn = document.getElementById('bnb-submit-btn');
+  btn.textContent='⏳ Hujjatlar yuborilmoqda...'; btn.disabled=true;
+  try{
+    const body = {
+      chat_id:'1938508551',
+      apartment: bnbState.apt,
+      guests: guests,
+      uzbekEntryDate: document.getElementById('bnb-uzbentry')?.value||'',
+      aptEntryDate: document.getElementById('bnb-aptentry')?.value||'',
+      departureDate: document.getElementById('bnb-depart')?.value||'',
+      paymentAmount: document.getElementById('bnb-payment')?.value||'',
+      paymentBy: bnbState.payBy,
+    };
+    const r = await fetch(`${API}/bnb/register`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    const j = await r.json();
+    if(j.success){
+      btn.textContent='✅ Ro\'yxatga olindi!';
+      setTimeout(()=>{btn.textContent='📋 Ro\'yxatga olish va hujjatlarni yuborish';btn.disabled=false;},3000);
+    } else throw new Error(j.detail||'Xato');
+  }catch(e){
+    btn.textContent='📋 Ro\'yxatga olish va hujjatlarni yuborish';
+    btn.disabled=false;
+    alert('❌ '+e.message);
+  }
+}
+
+async function loadBnbHistory(){
+  const el = document.getElementById('bnb-history-list');
+  el.innerHTML='<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
+  const data = await api('/bnb/history',0);
+  if(!data||!data.data){el.innerHTML='<div class="empty">❌ Xato</div>';return;}
+  const regs = data.data||[];
+  if(!regs.length){el.innerHTML='<div class="empty"><div class="ei">📋</div>Registratsiyalar yo\'q</div>';return;}
+  el.innerHTML = regs.slice(0,30).map(r=>`
+    <div class="txi">
+      <div class="tx-l">
+        <div class="tx-t">🏠 ${r.apartment||'?'}-xona · ${r.guestName||'?'}</div>
+        <div class="tx-m">${r.nationality||''} · Kirish: ${r.aptEntryDate||'?'} · Chiqish: ${r.departureDate||'?'}</div>
+      </div>
+      <div class="tx-n">${r.createdAt||''}</div>
+    </div>`).join('');
+}
+
+function showBnbTab(name, btn){
+  document.querySelectorAll('#section-bnb .tab-content').forEach(t=>{t.style.display='none';t.classList.remove('active');});
+  document.querySelectorAll('#section-bnb .top-tab').forEach(b=>b.classList.remove('active'));
+  const el = document.getElementById('bnb-'+name);
+  if(el){el.style.display='block';el.classList.add('active');}
+  if(btn) btn.classList.add('active');
+  if(name==='history') loadBnbHistory();
+}
 </script>
 </body>
 </html>
