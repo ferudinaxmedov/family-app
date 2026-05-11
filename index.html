@@ -581,11 +581,11 @@ canvas{max-height:200px}
         <div class="wcard-sub green" id="wid-task-sub">—</div>
         <div class="wbar"><div class="wbar-fill" id="wid-bar" style="width:0%"></div></div>
       </div>
-      <div class="wcard wcard-qarz" onclick="showSection('hisob',document.querySelector('.nav-btn:nth-child(2)'));showHisobTab('qarz',document.getElementById('htab-qarz'))">
-        <div class="wcard-ico">💳</div>
-        <div class="wcard-lbl">Faol qarzlar</div>
-        <div class="wcard-val" id="wid-qarz">— ta</div>
-        <div class="wcard-sub" id="wid-qarz-sub">—</div>
+      <div class="wcard wcard-qarz" onclick="showSection('bnb',document.querySelector('.nav-btn:nth-child(4)'))">
+        <div class="wcard-ico">🏨</div>
+        <div class="wcard-lbl">Aktiv BnB mehmonlar</div>
+        <div class="wcard-val" id="wid-bnb-count">— ta</div>
+        <div class="wcard-sub" id="wid-bnb-sub">Yuklanmoqda...</div>
       </div>
       <div class="wcard wcard-ai" onclick="showSection('ai',document.querySelector('.nav-btn:nth-child(5)'))">
         <div class="wcard-ai-inner">
@@ -817,7 +817,7 @@ canvas{max-height:200px}
   <div class="top-tabs" style="padding:16px 16px 0">
     <button class="top-tab active" onclick="showBnbTab('reg',this)">📋 Ro'yxat</button>
     <button class="top-tab" onclick="showBnbTab('files',this)">📁 Fayllar</button>
-    <button class="top-tab" onclick="showBnbTab('history',this)">📊 Tarix</button>
+    <button class="top-tab" onclick="showBnbTab('stats',this)">📊 Statistika</button>
   </div>
 
   <!-- REGISTRATION -->
@@ -833,9 +833,9 @@ canvas{max-height:200px}
       <button onclick="addBnbGuest()" style="background:none;border:none;color:rgba(245,158,11,.8);font-size:12px;cursor:pointer;padding:4px 0">+ Mehmon qo'shish</button>
     </div>
     <div class="card" style="padding:16px;margin-bottom:12px">
-      <div class="fg"><label class="fl">O'zbekistonga kirgan sana</label><input class="fi" type="date" id="bnb-uzbentry" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
-      <div class="fg"><label class="fl">Apartamentga kirgan sana</label><input class="fi" type="date" id="bnb-aptentry" oninput="calcBnbPayment()" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
-      <div class="fg"><label class="fl">Ketish sanasi</label><input class="fi" type="date" id="bnb-depart" oninput="calcBnbPayment()" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">O'zbekistonga kirgan sana</label><input class="fi" type="text" id="bnb-uzbentry" placeholder="DD.MM.YYYY" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">Apartamentga kirgan sana</label><input class="fi" type="text" id="bnb-aptentry" placeholder="DD.MM.YYYY" oninput="calcBnbPayment()" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">Ketish sanasi</label><input class="fi" type="text" id="bnb-depart" placeholder="DD.MM.YYYY" oninput="calcBnbPayment()" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
       <div class="fg"><label class="fl">To'lov miqdori</label><input class="fi" type="number" id="bnb-payment" placeholder="so'm" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
       <div id="bnb-calc" style="display:none;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.15);border-radius:10px;padding:10px 14px;margin-top:-8px;margin-bottom:12px">
         <div style="font-size:12px;color:rgba(245,237,224,.5);margin-bottom:4px">Taxminiy hisob-kitob:</div>
@@ -868,9 +868,9 @@ canvas{max-height:200px}
     <div id="bnb-files-list"></div>
   </div>
 
-  <!-- HISTORY -->
-  <div id="bnb-history" class="tab-content page" style="padding-top:12px;display:none">
-    <div class="hdr" style="padding-top:0"><span>Tarix 📊</span><button class="btn-ref" onclick="loadBnbHistory()">↻</button></div>
+  <!-- STATS -->
+  <div id="bnb-stats" class="tab-content page" style="padding-top:12px;display:none">
+    <div class="hdr" style="padding-top:0"><span>Statistika 📊</span><button class="btn-ref" onclick="loadBnbStats()">↻</button></div>
     <div id="bnb-history-list"><div class="loader"><div class="sp"></div>Yuklanmoqda...</div></div>
   </div>
 </div>
@@ -1040,7 +1040,7 @@ function showSection(name,btn){
   if(name==='main')   loadDashboard();
   if(name==='islom')  loadNamoz();
   if(name==='ishlar') loadTasks();
-  if(name==='bnb')    initBnbSection();
+  if(name==='bnb'){initBnbSection();showBnbTab('reg',document.querySelector('#section-bnb .top-tab'));}
 }
 
 function showHisobTab(name,btn){
@@ -1137,6 +1137,26 @@ async function loadDashboard(){
   const npT=document.getElementById('wid-np-time');
   if(npN) npN.textContent=next.n;
   if(npT) npT.textContent=next.t;
+
+  // BnB widget
+  const bnbData = await fetch(`${API}/bnb/history`).then(r=>r.json()).catch(()=>null);
+  const bnbRegs = bnbData?.data||[];
+  const now2 = new Date();
+  const parseDep2 = s => { const p=(s||'').split('.'); return p.length===3?new Date(+p[2],+p[1]-1,+p[0]):new Date(s); };
+  const bnbActive = bnbRegs.filter(r => r.departureDate && parseDep2(r.departureDate) >= now2);
+  const wBnbEl = document.getElementById('wid-bnb-count');
+  const wBnbSub = document.getElementById('wid-bnb-sub');
+  if(wBnbEl) wBnbEl.textContent = bnbActive.length + ' ta';
+  if(wBnbSub){
+    if(bnbActive.length){
+      const next = [...bnbActive].sort((a,b)=>parseDep2(a.departureDate)-parseDep2(b.departureDate))[0];
+      const dep = parseDep2(next.departureDate);
+      const d = Math.ceil((dep-now2)/86400000);
+      wBnbSub.textContent = `${next.apartment||'?'}-xona · ${d<=0?'Bugun':d+' kun'}`;
+    } else {
+      wBnbSub.textContent = 'Aktiv mehmon yo\'q';
+    }
+  }
 
   // Recent transactions
   const recEl=document.getElementById('dash-recent');
@@ -1741,7 +1761,9 @@ function initBnbSection(){
     </div>`).join('');
   renderBnbGuests();
   renderBnbFiles();
-  const today = new Date().toLocaleDateString('en-CA');
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const today = `${pad(now.getDate())}.${pad(now.getMonth()+1)}.${now.getFullYear()}`;
   const aptEl = document.getElementById('bnb-aptentry');
   const uzbEl = document.getElementById('bnb-uzbentry');
   if(aptEl && !aptEl.value) aptEl.value = today;
@@ -1839,6 +1861,13 @@ async function sendBnbFile(fileType, apt){
   }
 }
 
+function toISO(ddmmyyyy){
+  if(!ddmmyyyy) return '';
+  const [d,m,y] = ddmmyyyy.split('.');
+  if(!d||!m||!y) return '';
+  return `${y}-${m}-${d}`;
+}
+
 async function submitBnbReg(){
   const guests = bnbState.guests;
   if(!guests[0].name){alert('Mehmon ismini kiriting!');return;}
@@ -1850,9 +1879,9 @@ async function submitBnbReg(){
       chat_id:'1938508551',
       apartment: bnbState.apt,
       guests: guests,
-      uzbekEntryDate: document.getElementById('bnb-uzbentry')?.value||'',
-      aptEntryDate: document.getElementById('bnb-aptentry')?.value||'',
-      departureDate: document.getElementById('bnb-depart')?.value||'',
+      uzbekEntryDate: toISO(document.getElementById('bnb-uzbentry')?.value||''),
+      aptEntryDate: toISO(document.getElementById('bnb-aptentry')?.value||''),
+      departureDate: toISO(document.getElementById('bnb-depart')?.value||''),
       paymentAmount: document.getElementById('bnb-payment')?.value||'',
       paymentBy: bnbState.payBy,
     };
@@ -1873,30 +1902,96 @@ async function submitBnbReg(){
   }
 }
 
-async function loadBnbHistory(){
+async function loadBnbStats(){
   const el = document.getElementById('bnb-history-list');
+  if(!el) return;
   el.innerHTML='<div class="loader"><div class="sp"></div>Yuklanmoqda...</div>';
-  const data = await api('/bnb/history',0);
+  const data = await api('/bnb/history', 0);
   if(!data||!data.data){el.innerHTML='<div class="empty">❌ Xato</div>';return;}
   const regs = data.data||[];
-  if(!regs.length){el.innerHTML='<div class="empty"><div class="ei">📋</div>Registratsiyalar yo\'q</div>';return;}
-  el.innerHTML = regs.slice(0,30).map(r=>`
-    <div class="txi">
-      <div class="tx-l">
-        <div class="tx-t">🏠 ${r.apartment||'?'}-xona · ${r.guestName||'?'}</div>
-        <div class="tx-m">${r.nationality||''} · Kirish: ${r.aptEntryDate||'?'} · Chiqish: ${r.departureDate||'?'}</div>
+
+  const aptCount = {};
+  APTS.forEach(a => aptCount[a] = 0);
+  regs.forEach(r => { if(r.apartment) aptCount[r.apartment] = (aptCount[r.apartment]||0)+1; });
+
+  const now = new Date();
+  const parseDep = s => {
+    const p=(s||'').split('.');
+    return p.length===3 ? new Date(+p[2],+p[1]-1,+p[0]) : new Date(s);
+  };
+  const active = regs.filter(r => r.departureDate && parseDep(r.departureDate) >= now)
+    .sort((a,b) => parseDep(a.departureDate) - parseDep(b.departureDate));
+
+  const totalGuests = regs.length;
+  const activeCount = active.length;
+
+  let h = `
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="sc">
+        <div class="sc-lbl">👥 Jami mehmonlar</div>
+        <div class="sc-val" style="color:var(--amber)">${totalGuests} ta</div>
       </div>
-      <div class="tx-n">${r.createdAt||''}</div>
-    </div>`).join('');
+      <div class="sc">
+        <div class="sc-lbl">✅ Hozir aktiv</div>
+        <div class="sc-val" style="color:var(--green)">${activeCount} ta</div>
+      </div>
+    </div>
+    <div class="card" style="padding:14px;margin-bottom:12px">
+      <div class="sec-lbl" style="font-size:10px;color:rgba(245,237,224,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Xonalar bo'yicha</div>
+      ${APTS.map(a => {
+        const cnt = aptCount[a]||0;
+        const pct = totalGuests ? Math.round(cnt/totalGuests*100) : 0;
+        return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="font-size:13px;font-weight:600;color:#fde68a;width:32px">${a}</span>
+          <div style="flex:1;height:6px;background:rgba(255,220,140,.08);border-radius:3px">
+            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--amber),var(--orange));border-radius:3px"></div>
+          </div>
+          <span style="font-size:12px;color:rgba(245,237,224,.5);width:40px;text-align:right">${cnt} ta</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  if(active.length){
+    h += `<div class="card" style="padding:14px">
+      <div class="sec-lbl" style="font-size:10px;color:rgba(245,237,224,.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">⏰ Tez tugaydigan registratsiyalar</div>
+      ${active.slice(0,5).map(r => {
+        const dep = parseDep(r.departureDate);
+        const daysLeft = Math.ceil((dep-now)/86400000);
+        const color = daysLeft<=2?'var(--red)':daysLeft<=5?'var(--orange)':'var(--green)';
+        return `<div class="txi" style="margin-bottom:6px">
+          <div class="tx-l">
+            <div class="tx-t">🏠 ${r.apartment||'?'}-xona · ${r.guestName||'?'}</div>
+            <div class="tx-m">${r.nationality||''} · Ketish: ${r.departureDate||'?'}</div>
+          </div>
+          <div style="color:${color};font-size:13px;font-weight:600;white-space:nowrap">
+            ${daysLeft<=0?'Tugagan':daysLeft===1?'Bugun':daysLeft+' kun'}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  } else {
+    h += '<div class="empty"><div class="ei">📭</div>Aktiv registratsiyalar yo\'q</div>';
+  }
+
+  el.innerHTML = h;
+}
+
+function parseDDMMYYYY(s){
+  if(!s) return null;
+  const parts = s.split('.');
+  if(parts.length!==3) return null;
+  const [d,m,y] = parts;
+  const dt = new Date(+y, +m-1, +d);
+  return isNaN(dt) ? null : dt;
 }
 
 function calcBnbPayment(){
   const entry = document.getElementById('bnb-aptentry')?.value;
   const depart = document.getElementById('bnb-depart')?.value;
-  if(!entry || !depart) return;
-  const d1 = new Date(entry);
-  const d2 = new Date(depart);
-  const days = Math.round((d2 - d1) / 86400000);
+  const d1 = parseDDMMYYYY(entry);
+  const d2 = parseDDMMYYYY(depart);
+  if(!d1||!d2) return;
+  const days = Math.round((d2 - d1) / 86400000) + 1;
   if(days <= 0) return;
   const sum = days * 8240;
   const payEl = document.getElementById('bnb-payment');
@@ -1913,7 +2008,7 @@ function showBnbTab(name, btn){
   const el = document.getElementById('bnb-'+name);
   if(el){el.style.display='block';el.classList.add('active');}
   if(btn) btn.classList.add('active');
-  if(name==='history') loadBnbHistory();
+  if(name==='stats') loadBnbStats();
 }
 </script>
 </body>
