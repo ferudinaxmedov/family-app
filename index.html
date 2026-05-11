@@ -834,9 +834,13 @@ canvas{max-height:200px}
     </div>
     <div class="card" style="padding:16px;margin-bottom:12px">
       <div class="fg"><label class="fl">O'zbekistonga kirgan sana</label><input class="fi" type="date" id="bnb-uzbentry" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
-      <div class="fg"><label class="fl">Apartamentga kirgan sana</label><input class="fi" type="date" id="bnb-aptentry" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
-      <div class="fg"><label class="fl">Ketish sanasi</label><input class="fi" type="date" id="bnb-depart" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
-      <div class="fg"><label class="fl">To'lov miqdori</label><input class="fi" type="number" id="bnb-payment" placeholder="USD" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">Apartamentga kirgan sana</label><input class="fi" type="date" id="bnb-aptentry" oninput="calcBnbPayment()" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">Ketish sanasi</label><input class="fi" type="date" id="bnb-depart" oninput="calcBnbPayment()" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div class="fg"><label class="fl">To'lov miqdori</label><input class="fi" type="number" id="bnb-payment" placeholder="so'm" style="width:100%;background:rgba(255,248,235,.04);border:1px solid rgba(255,220,140,.08);border-radius:10px;padding:11px 14px;color:#f5ede0;font-size:14px"></div>
+      <div id="bnb-calc" style="display:none;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.15);border-radius:10px;padding:10px 14px;margin-top:-8px;margin-bottom:12px">
+        <div style="font-size:12px;color:rgba(245,237,224,.5);margin-bottom:4px">Taxminiy hisob-kitob:</div>
+        <div id="bnb-calc-detail" style="font-size:13px;color:#fde68a"></div>
+      </div>
       <div class="fg"><label class="fl">Kim to'laydi</label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <button class="sb on" onclick="bnbPaySel(this,'airbnb')">🏡 AirBnB</button>
@@ -1884,6 +1888,23 @@ async function loadBnbHistory(){
       </div>
       <div class="tx-n">${r.createdAt||''}</div>
     </div>`).join('');
+}
+
+function calcBnbPayment(){
+  const entry = document.getElementById('bnb-aptentry')?.value;
+  const depart = document.getElementById('bnb-depart')?.value;
+  if(!entry || !depart) return;
+  const d1 = new Date(entry);
+  const d2 = new Date(depart);
+  const days = Math.round((d2 - d1) / 86400000);
+  if(days <= 0) return;
+  const sum = days * 8240;
+  const payEl = document.getElementById('bnb-payment');
+  const calcEl = document.getElementById('bnb-calc');
+  const detailEl = document.getElementById('bnb-calc-detail');
+  if(payEl) payEl.value = sum;
+  if(calcEl) calcEl.style.display = 'block';
+  if(detailEl) detailEl.textContent = `${days} kun × 8,240 so'm = ${sum.toLocaleString('ru-RU')} so'm`;
 }
 
 function showBnbTab(name, btn){
